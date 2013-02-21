@@ -1,0 +1,266 @@
+\Lecture{Dinesh K.}{Jan 16, 2012}{7}{A Combinatorial Interpretation of Permanent}
+%\theme{Between $\P$ and $\PSPACE$.}
+%\lectureplan{Combinatorial interpretation of permanents over integer
+%matrices, using cycle cover}
+
+\newcommand{\countervalue}[1]{\arabic{#1} \addtocounter{#1}{1}}
+\newcommand{\perm}{{\sf perm}}
+We consider the problem of computing the permanent of a square matrix $A_{n
+\times n}$ defined as
+\[ \perm(A) = \sum_{\substack{\sigma \in S_n}} \prod_{\substack{i = n}}^n
+A_{i, \sigma(i)} \]
+where $S_n$ denotes the set of all permutations of $\left \{1, 2, \ldots, n
+\right \}$. Note that this formula is very similar to that of the determinant
+computation which can be expressed as,
+\[ |A| = \sum_{\substack{\sigma \in S_n}} sign(\sigma) \prod_{\substack{i = n}}^n
+A_{i, \sigma(i)} \]
+where $sign$ of a permutation is $-1/+1$ depending on if the number of inversions
+in the permutations is odd or even. 
+Though the definitions are similar "syntactically", the computation problems are very different
+in the level of hardness. In this lecture, we try to understand more on
+permanents and will come up with equivalent combinatorial characterisations.
+
+\section{Characterisation of Permanents of Binary Square Matrices}
+Our aim is to how characterise the problem of computing permanent as a
+combinatorial problem thereby gives us a handle for attacking the problem. 
+
+Consider a bipartite graph $G(X, Y, E)$ where $|X|=|Y| = n$. Consider the
+adjacency matrix $A=(A_{i,j})_{n \times n}$ where,
+\[ A_{i,j} = \left \{
+	\begin{array}{rl}
+	 1 & \text{if } (x_i,y_j) \in E, x_i \in X, y_j \in Y \\
+	 0 & \text{otherwise}
+	\end{array} \right . \]
+We give the following characterisation for permanent of $A$.
+\begin{lemma}
+$\perm(A) = \left | \text{\# of perfect matchings in } G \right |$
+\end{lemma}
+\begin{proof}
+We show that every permutation $\sigma \in S_n$ corresponds to a unique
+perfect matching $\calM$.
+
+($\Rightarrow$) Note that every permutation $\sigma$ of $S_n$ with the property
+$\prod_{\substack{i=1}}^n A_{i, \sigma(i)} = 1$ means that there is an edge
+connecting vertices $x_i$ and $y_{\sigma(i)}$. Since $\sigma$ is a permutation,
+the map is bijective and $y_{\sigma(i)}$ exists for every $x_i$ and is
+unique. Hence by definition $\{(x_i, y_{\sigma(i)})| i \in \{1, 2, \ldots,
+n\}\}$ forms a perfect matching. 
+
+($\Leftarrow$) Similarly, given a perfect matching $\calM$,
+one can define a permutation from $X$ to $Y$ as $\sigma(i)=j$ if $(x_i, y_j)
+\in \calM$. It can be seen that the map is bijective and $\prod_{i=1}^n A_{i,
+\sigma(i)}$ will be $1$. 
+
+Hence for every $\sigma \in S_n$,
+\begin{equation} 
+\label{eq:arg}
+\prod_{\substack{i=1}}^n A_{i,\sigma(i)} = 1 \iff \left \{ (x_i,
+y_{\sigma(i)}) | i \in \{1, 2, \ldots, n \} \text{ is a matching} \right \} 
+\end{equation}
+Now taking sum over all permutations (on both sides) would give the lemma.
+\end{proof}
+
+Hence for a $\{0,1\}$ square matrix, checking if \perm~ is larger than $0$ can
+be solved by showing a perfect matching in the corresponding graph.
+Standard flow algorithms like the \emph{Fork-Fulkerson algorithm} can be used to find the 
+matching in polynomial time.
+
+This characterisation also gives us a \#\P~machine for \perm, thereby showing 
+that \perm~is in \#\P.
+\begin{lemma}
+For $A \in \{0,1\}^{n \times n}$, $\perm(A) \in \#\P$
+\end{lemma}
+\begin{proof}
+Following machine $M$ computes \perm(A).\\
+$M$ = ``On input $A_{n\times n}$ 
+\begin{enumerate}
+\item Construct a bipartite graph $G(X, Y, E)$ with  
+$X=\{x_1,x_2,\ldots,x_n\}, \\ Y=\{y_1,y_2,\ldots,y_n\}, (x_i,y_j) \in 
+E \iff A_{i,j}=1$
+\item Non deterministically guess a subset of edges.
+\item Check if they form a perfect matching and accept iff the edges form a
+perfect matching."
+\end{enumerate}
+
+Note that $M$ runs in polynomial time and by the equivalence~(\ref{eq:arg}),
+each perfect matching contributes a count of one to the permanent. Hence the
+number of accepting paths of $M$ will exactly be equal to the \perm(A).
+\end{proof}
+
+\section{Characterisation of Permanents of Integer matrices}
+
+Now we get to matrices with integer entries. Since the entries could also be negative, the permanent of the matrix 
+can be negative. Hence this function cannot be in $\#\P$, but we will show that it is in $\FP^{\#\P}$. 
+To do this, we start with the combinatorial characterisation of the permanent, for which we need the notion of cycle covers.
+
+%\subsection{Cycle covers}
+\begin{definition}(Cycle Cover) 
+Consider a directed weighted graph $G(V,E,w)$ with $w : E
+\to \N$. A \emph{cycle cover} of $G$ is a subset of edges that forms a set of vertex disjoint directed
+cycles in $G$ such that each vertex is a part of at least one cycle in the cycle cover.
+
+\emph{Weight of a cycle cover} $\calC$ is defined as the product of weights of
+edges in $\calC$.
+\[ wt(\calC) = \prod_{\substack{e \in \calC}} w(e) \]
+\end{definition}
+
+Consider the following examples. Note the effect of adding self loops.
+\begin{figure}[htp!]
+\centering
+\begin{tikzpicture}
+\tikzset{
+    myarrow/.style={->, >=latex', thick},
+}
+\newcounter{vertid}
+\setcounter{vertid}{1}
+\foreach \x in {0,3}
+{
+	\draw [myarrow] (\x+1,0) node[above]{\countervalue{vertid}}--(\x+0,1);
+	\draw [myarrow] (\x+0,1) node[above]{\countervalue{vertid}}--(\x+1,2);
+	\draw [myarrow] (\x+1,2) node[above]{\countervalue{vertid}}--(\x+2,1);
+	\draw [myarrow] (\x+2,1) node[above]{\countervalue{vertid}}--(\x+1,0);
+};
+\draw[myarrow] (2,1) -> (3,1);
+\end{tikzpicture}
+\quad
+\begin{tikzpicture}
+\tikzset{
+    myarrow/.style={->, >=latex', thick},
+}
+%\newcounter{vertid}
+\setcounter{vertid}{1}
+	\draw [myarrow] (1,0) node[above]{\countervalue{vertid}}
+	--(0,1.38);
+	\draw [myarrow] (0,1.38) node[above]{\countervalue{vertid}}
+	--(1,2.76);
+	\draw [myarrow] (1,2.76) node[above]{\countervalue{vertid}}
+	--(2.62,2.2);
+	\draw [myarrow] (2.6,2.2) node[above]{\countervalue{vertid}}
+	--(2.6,0.5);
+	\draw [myarrow] (2.6,0.5) node[above]{\countervalue{vertid}}
+	--(1,0);
+
+\foreach \x in {6.24}
+{
+	\draw [myarrow] (\x-0,1.38) node[above]{\countervalue{vertid}}
+	--(\x-1,0);
+	\draw [myarrow] (\x-1,2.76) node[above]{\countervalue{vertid}}
+	--(\x-0,1.38);
+	\draw [myarrow] (\x-2.62,2.2) node[above]{\countervalue{vertid}}
+	--(\x-1,2.76);
+	\draw [myarrow] (\x-2.6,0.5) node[above]{\countervalue{vertid}}
+	--(\x-2.6,2.2);
+	\draw [myarrow] (\x-1,0) node[above]{\countervalue{vertid}}
+	--(\x-2.6,0.5);
+
+	\draw [myarrow] (2.6,0.5) -- (\x-2.6,0.5);
+	\draw [myarrow] (\x-2.6,2.2) -- (2.6,2.2);
+
+};
+\end{tikzpicture}
+
+\centering
+\begin{tikzpicture}
+\tikzset{
+    myarrow/.style={->, >=latex', thick},
+}
+%\newcounter{vertid}
+\setcounter{vertid}{1}
+	\draw [myarrow] (1,0) node[above] (A) {\countervalue{vertid}}
+	--(0,1.38);
+	\draw [myarrow] (0,1.38) node[above] (B) {\countervalue{vertid}}
+	--(1,2.76);
+	\draw [myarrow] (1,2.76) node[above] (C){\countervalue{vertid}}
+	--(2.62,2.2);
+	\draw [myarrow] (2.6,2.2) node[above]{\countervalue{vertid}}
+	--(2.6,0.5);
+	\draw [myarrow] (2.6,0.5) node[above]{\countervalue{vertid}}
+	--(1,0);
+
+	\path [myarrow] (A) edge [loop below] (A);
+	\path [myarrow] (B) edge [loop left] (B);
+	\path [myarrow] (C) edge [loop above] (C);
+
+\foreach \x in {6.24}
+{
+	\draw [myarrow] (\x-0,1.38) node[above] (E) {\countervalue{vertid}}
+	--(\x-1,0);
+	\draw [myarrow] (\x-1,2.76) node[above](F){\countervalue{vertid}}
+	--(\x-0,1.38);
+	\draw [myarrow] (\x-2.62,2.2) node[above]{\countervalue{vertid}}
+	--(\x-1,2.76);
+	\draw [myarrow] (\x-2.6,0.5) node[above] {\countervalue{vertid}}
+	--(\x-2.6,2.2);
+	\draw [myarrow] (\x-1,0) node[above](D) {\countervalue{vertid}}
+	--(\x-2.6,0.5);
+
+	\draw [myarrow] (2.6,0.5) -- (\x-2.6,0.5);
+	\draw [myarrow] (\x-2.6,2.2) -- (2.6,2.2);
+
+	\path [myarrow] (D) edge [loop below] (D);
+	\path [myarrow] (E) edge [loop right] (E);
+	\path [myarrow] (F) edge [loop above] (F);
+}
+\end{tikzpicture}
+\caption{{\small In the first example, we can see that the only cycle cover is 
+\texttt{(1,2,3,4),(5,6,7,8)}. For the second one also there is only one
+cycle cover, namely \texttt{(1,2,3,4,5),(10,9,8,7,6)}.
+The third is a modified version of the second example. Now there are
+\emph{two} cycle covers namely, \texttt{\{(1,2,3,4,5),(10,9,8,7,6)\},
+\{(1),(2),(3),(6),(7),(10),(4,5,9,8)\}}}.
+}
+\end{figure}
+
+We are now set to give a characterisation of permanent over matrices in 
+$\Z^{n \times n}$, which we will be crucially using in the next lecture.
+
+\begin{lemma}
+Let $A \in \Z^{n \times n}$. Let $G$ be the directed weighted graph obtained
+by interpreting $A$ as the weighted adjacency matrix of $G$, i,e. 
+\[|V(G)| = n,\] \[ \forall 1 \le i,j \le n, wt(i, j) = w \iff A_{i,j} = w \]
+then
+\[ \perm(A) = \sum_{\substack{\calC \in Cyclecover(G)}} wt(\calC) \]
+\end{lemma}
+\begin{proof}
+We show that corresponding to every permutation $\sigma \in S_n$, there is a
+unique cycle cover $\calC$. That is,
+\[ \prod_{\substack{i=1}}^n A_{i,\sigma(i)} = k \iff \exists~\calC \text{ such
+that } wt(\calC) = k \]
+
+($\Leftarrow$) Suppose there is a cycle cover $\calC$ such 
+that $wt(\calC) = k$. Without loss of generality assume $k \not = 0$. 
+(If $k=0$, then one of the edges is not  present and hence no cycle cover is 
+possible using the edges in $\calC$).  
+Now we can define a permutation to be $\sigma(i) = j~\forall (i,j)\in \calC$.
+Since $\calC$ covers all vertices, $\sigma$ is defined for all $\{1,2,\ldots,
+n\}$ and since $\calC$ is composed of cycles, every $(i,j)$ will be unique.
+Hence the map $\sigma$ will be bijective and is a valid permutation in $S_n$.
+Also $\prod_{i=1}^n A_{i,\sigma(i)} = \prod_{(i,j) \in \calC} wt(i,j) =
+wt(\calC) = k$.
+
+($\Rightarrow$) Similarly, given a permutation $\sigma$ such that $\prod_{i=1}^n
+A_{i,\sigma(i)} = k$, we construct a cycle cover as follows.
+
+If $k=0$, then there is no cycle cover possible with the given permutation
+since a zero weight edge is appearing. Hence let $k \not = 0$. Fix an $i\in
+\{1,2,\ldots,n\}$. Consider the sequence $(i, \sigma(i), \sigma^2(i), \ldots,
+\sigma^n(i))$ where $\sigma^i$ for $i \ge 0$ is obtained by applying $\sigma$
+function $i$ times. It can be seen by pigeon hole principle that atleast one
+values in the sequence must repeat (since, $\sigma$ is defined on $n$ 
+terms and there are $n+1$ terms in the sequence). Without loss of generality, 
+let $\sigma^l(i)$ and $\sigma^m(i)$ repeat with $ 0 \le l < m \le n$. 
+Since all the weights  are non-zero, the vertices 
+$\sigma^l(i), \sigma^{l+1}(i), \ldots, \sigma^m(i) = \sigma^l(i)$ have 
+edges between them and clearly forms a cycle. We can find
+all the cycles by repeating this process for various values of $i$. 
+Note that since $\sigma$ is a permutation, the cycles obtained will be disjoint 
+and will cover the entire graph.
+
+Now taking sum over all permutations on both sides proves the claim.
+\end{proof}
+
+Using this result the following observation (which is left as an exercise) can
+also be made.
+\begin{observation}
+For $A \in \Z^{n\times n}$ computing permanent of $A$ is in $\FP^{\#\P}$.
+\end{observation}

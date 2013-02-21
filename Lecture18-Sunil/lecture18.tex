@@ -1,0 +1,281 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsfonts,amsthm,complexity}
+\usepackage{verbatim}
+\newcommand{\CYCLE}{{\sf CYCLE~}}
+\newcommand{\FPSPACE}{{\sf FPSPACE~}}
+\usepackage{tikz}
+\usetikzlibrary{calc,through,backgrounds,decorations.pathmorphing}
+
+\input{../stylefile/preamble.tex}
+\begin{document}
+\lecture{18}{Proof of Toda's Theorem}{Feb 07, 2012}{ Jayalal Sarma M.N.}{Sunil K
+  S.}  \theme{Between P and PSPACE}
+\lectureplan{In this lecture we will be concluding the lectures on the
+  theme of contrasting the power of counting to that of
+  alternations. Today we will be proving the interesting result that
+  $\PH \subseteq \P^{\#\P}$. To do this, first using the
+  Valiant-Vazirani lemma we will show that $\PH \subseteq
+  \BP(\parity\P)$.}
+\section{Valiant-Vazirani Lemma}
+We have already saw Valiant-Vazirani theorem which stated that :
+\begin{lemma} Valiant-Vazirani Theorem: There exists a probabilistic
+polynomial-time algorthm f such that for every n-variable boolean
+formula $\varphi$
+\begin{eqnarray*}
+  \varphi\in SAT\Rightarrow Pr[f(\chi)\in USAT] &\geq& \frac{1}{8n} \\
+  \varphi\notin SAT\Rightarrow Pr[f(\chi)\in SAT] &=& 0
+\end{eqnarray*}
+\end{lemma}
+But to prove that $\PH \subseteq \BP(\parity\P)$ we will need
+amplified version of this lemma.
+\begin{lemma}
+Valiant-Vazirani lemma (Amplified version): There exists a randomized
+algorithm which produce $\varphi$ from a given boolean formula $\phi$
+such that for a polynomila $q(n)$:
+\begin{eqnarray*}
+  x\in L \Rightarrow Pr[\varphi\in \parity SAT] &\geq&
+  \left(1-\frac{1}{2^{q(n)}}\right) \\ 
+  x\notin L \Rightarrow Pr[\varphi\notin \parity SAT] &=& 1
+\end{eqnarray*}
+\end{lemma} In the above construction, $\varphi=\phi\land h$, where
+$h$ is a hash function. Here $\varphi$ is independent on $\phi$ or its
+structure.  To find $h$, chosen from a good hash family, we just need
+to know the domain and range, which is $2^n$. Here $h$ depends only on
+$n$. Let $\tau(x,y)$ denote the choice of $h$ from the hash family
+based on the random string $y$.  Now we modify the lemma statements
+given above as:
+\begin{eqnarray*}
+  (\exists \phi) \phi\in  SAT\Rightarrow
+  Pr_y[\displaystyle\parity_x\phi\land\tau(x,y)] &\geq&
+  \left(1-\frac{1}{2^{q(n)}}\right) \\
+  (\lnot\exists \phi) \phi\notin  SAT\Rightarrow
+  Pr_y[\displaystyle\parity_x\phi\land\tau(x,y)] &=& 1
+\end{eqnarray*}
+where $\displaystyle\phi_x$ represents the parity of number of
+satisfying assignments.
+
+Observations: Existing of a satisfying assignment for $\phi$ is
+equivalent to saying $\phi\in SAT$. Here we can talk about any
+$\phi$. That is $\phi$ can even have $\exists$ or $\forall$
+quantifiers. This gives a better handle since construction is
+completely oblivious of what $\phi$ is.
+
+Claim: $\PH\subseteq\BP(\parity\P)$
+\begin{proof} Proof by induction on the number of alterations, $k$.\\
+  Basis: for $k=0$, we already have the result
+  $\NP\subseteq\BP(\parity\P)$.\\ Assume the result for $k$. ie;
+  $\Sigma_k$ or $SAT_k$ $\in \BP(\parity\P)$.\\ We need to prove that
+  $SAT_{k+1}\in \BP(\parity\P)$.
+$$\phi\in SAT_k\Rightarrow Pr[\parity_z\phi\land\tau(x,z)]\geq(1-\frac{1}{2^{q(n)}})$$
+$$\phi\notin SAT_k\Rightarrow Pr[\parity_z\phi\land\tau(x,z)]=0$$
+Now, any $\phi '\in SAT_{k+1}$ can be written as $\phi
+'=\exists\sigma$ where $\sigma\in SAT_k$
+$$\phi '\in SAT_{k+1}\Rightarrow\exists\sigma\in SAT_k\mbox{ with } \sigma\in\Pi_k$$
+
+Let $\sigma '=\exists(\lnot\varphi)$ where $\sigma=\lnot\varphi$\\
+$$\lnot(\forall\varphi)\Rightarrow\exists\sigma\Rightarrow Pr[\sigma '\in\parity SAT]\geq (1-\frac{1}{2^{q(n)}})$$
+$$\forall\varphi\Rightarrow\lnot\exists\sigma\Rightarrow Pr[\sigma '\notin\parity SAT]\geq (1-\frac{1}{2^{q(n)}})$$
+
+$$\forall\varphi\Rightarrow Pr[\sigma ''\in\parity SAT]\geq (1-\frac{1}{2^{q(n)}})$$
+$$\lnot\forall\varphi\Rightarrow Pr[\sigma ''\notin\parity SAT]\geq 1$$
+$$\varphi\rightarrow\varphi\land(h(y)=0^k)\rightarrow\varphi\land(h(y)=0^{k_1}\land h(x)=0^{k_2})$$
+$$\phi=\exists\forall\varphi$$
+
+\end{proof}
+\section{Toda's Theorem: $\PH\subseteq\P^{\#\P}$} Any problem in $\PH$
+can be solved by a $\P$ machine by making queries to a $\#\P$ machine.
+\begin{lemma}
+\label{lemma1} If $\mathcal{A}\in \parity\P$ then $\exists B$ such
+that for any polynomial $q$ and input $x$ of length $n$,
+$$x\in \mathcal{A}\Rightarrow (\#(x,y)\in B)\equiv -1 \mod 2^{q(n)}$$
+$$x\notin \mathcal{A}\Rightarrow (\#(x,y)\in B)\equiv 0 \mod 2^{q(n)}$$
+
+Now we can state the lemma as, Let $\mathcal{A}\in \parity\P$. Then
+for any polynomial $q$, there exists a polynomial-time NTM M such that
+for any input $x$ of length $n$,
+$$x\in \mathcal{A}\Rightarrow (\chi_M(x))\equiv -1\mod 2^{q(n)}$$
+$$x\notin \mathcal{A}\Rightarrow (\chi_M(x))\equiv 0 \mod 2^{q(n)}$$
+Here $\chi_M(x)$ denotes the number of accepting computations of $M$
+on $x$.
+\end{lemma}
+\begin{proof} Let $M_1$ be a polynomial time NTM such that
+$$\chi_{M_1}\equiv 1\mod 2\mbox{ if } x\in \mathcal{A}$$ %and
+$$\chi_{M_1}\equiv 0\mod 2 \mbox{ if }x\notin \mathcal{A}$$ 
+
+In other words,
+$$x\in \mathcal{A}\Rightarrow (\#acc_M(x)) \mbox{ is odd}$$
+$$x\notin \mathcal{A}\Rightarrow (\#acc_M(x))\mbox{ is even}$$
+
+
+Define another polynomial time NTM $M_2$ that repeats $M_1$ on $x$ a
+number of times such that
+$$x\in \mathcal{A}\Rightarrow (\#acc_{M_2}(x)) \mbox{ is odd}$$
+$$x\notin \mathcal{A}\Rightarrow (\#acc_{M_2}(x))\mbox{ is even}$$
+
+Note: Given two NDTMs $M_1$ and $M_2$, we know how to get an $M_3$
+with:
+\begin{itemize}
+\item $\#acc_{M_3}(x)=\#acc_{M_1}(x)+\#acc_{M_2}(x) $: By running
+$M_1$ and $M_2$ in parallel.
+\item $\#acc_{M_3}(x)=\#acc_{M_1}(x)\times\#acc_{M_2}(x) $: By rnning
+$M_1$ and $M_2$ one after other.
+\end{itemize}
+\begin{comment} The following psuedocode represents the working of
+$M_2$ in a recursive form.  Non-deterministic Turing machine:
+$M_2(<x,i>)$\\ //$i$: Number of times $M_2$ executes $M_1$.\\
+\begin{enumerate}
+\item If $i=0$, then simulate $M_1(x)$
+\item Else if $i>0$
+	\begin{enumerate}
+	\item Nondeterministically choose an integer
+$m\in\{1,2,\cdots,7\}$
+	\item If $m\leq 4$ then let $k=3$ else let $k=4$
+	\item For $j=1$ to $k$ do
+		\begin{enumerate}
+		\item recursively run $M_2(<x,i-1>)$
+		\item if $M_2(<x,i-1>)$ rejects then reject and halt
+		\end{enumerate}
+	\item Accept and halt
+	\end{enumerate}
+\end{enumerate}
+\end{comment}
+
+Let $f(x,i)=\chi_{M_2}(<x,i>)$. It if clear that $f$ satisfies the
+recurrence relation given below:
+\begin{eqnarray}
+\label{rec} f(x,i+1)=3f(x,i)^4+4f(x,i)^3, i\geq0
+\end{eqnarray} From equation ~\ref{rec}
+$$f(x,0)\mbox{ is even }\Rightarrow f(x,i)\equiv 0\mod 2^{2^i}$$
+$$f(x,0)\mbox{ is odd }\Rightarrow f(x,i)\equiv -1\mod 2^{2^i}$$
+Now from the above analysis,
+$$x\in \mathcal{A}\Rightarrow (\chi_M(x)\equiv  -1\mod 2^{2^{\log q(n)}}\equiv -1\mod 2^{q(n)}$$
+$$x\notin \mathcal{A}\Rightarrow (\chi_M(x)\equiv  0\mod 2^{2^{\log q(n)}}\equiv 0\mod 2^{q(n)}$$
+\end{proof}
+
+
+\begin{theorem} $\BP(\parity\P)\subseteq \P^{\#\P}$
+\end{theorem}
+\begin{proof} $L\in \BP(\parity\P)$ means there exists a set
+$\mathcal{A} \in \parity\P$ and a polynomial $p$ such that for all
+$x$,
+$$x\in L \Rightarrow Pr_y[(x,y)\in \mathcal{A}]\geq \frac{2}{3}$$
+$$x\notin L \Rightarrow Pr_y[(x,y)\in \mathcal{A}]\leq \frac{1}{3}$$
+where $y$ ranges over all strings of length $p(|x|)$.
+
+By lemma ~\ref{lemma1}, if $\mathcal{A} \in \parity\P$, there exists a
+polynomial-time NTM M such that for all $(x,y)$, with $|x|=n$ and
+$|y|=p(n)$
+$$\chi_M(<x,y>)\equiv -1\mod 2^{p(n)}, \mbox{ if } <x,y>\in\mathcal{A}$$
+$$\chi_M(<x,y>)\equiv 0\mod 2^{p(n)}, \mbox{ if } <x,y>\notin\mathcal{A}$$
+
+
+Let $g(x)$ and $h(x)$ are two functions defined as,
+\begin{eqnarray*} g(x)=|\{y:|y|=p(|x|),(x,y)\in \mathcal{A}\}|\\
+h(x)=\displaystyle\sum_{|y|=p(|x|)}\chi_M(<x,y>)
+\end{eqnarray*} Then for any $x$ of length $n$,
+\begin{eqnarray*}
+h(x)&=&\displaystyle\sum_{<x,y>\in\mathcal{A}}\chi_M(<x,y>)+\displaystyle\sum_{(<x,y>\notin\mathcal{A})}\chi_M(<x,y>)\\
+&=&(\displaystyle\sum_{<x,y>\in\mathcal{A}}(-1)+\displaystyle\sum_{(<x,y>\notin\mathcal{A})}0)\mod
+2^{q(n)}\\ %&\equiv&(g(x).(-1)+(2^{p(n)}-g(x)).0)\mod 2^{p(n)}\\
+&\equiv&(g(x).(-1)+(2^{p(n)}-g(x)).0)\mod 2^{p(n)}\\
+&\equiv&(-g(x))\mod 2^{p(n)}
+\end{eqnarray*} Construct a machine $N$ that has $h(x)$ accepting path
+(Just guess a $y$ and run $N$). Now make a query to a $\#\P$ machine
+to compute $h(x)$. By having $q(n)$ sufficiently large, ie.,
+$2^{q(n)}>2{p(n)}$ we can compute $g(x)=(2^{p(n)}-h(x))$.
+
+We know $x\in L$ if and only if $g(x)>2^{p(n)-1}$. Since $g(x)$ can be
+computed from $h(x)$ and $p(n)$ it is clear that we can decide whether
+$x\in L$ from $h(x)$. The function $h$ is in $\#\P$, we can define an
+NTM $M_1$ that on input $x$ first nondeterministically guesses a
+string $y$ of length $p(|x|)$ and then simulate $M$ on $<x,y>$.
+Hence, $L\in P^{\#\P}$.
+\end{proof}
+
+\begin{comment} We saw $(\#P=FP)\Longrightarrow (P=PP)$ in decision
+world. Now what will be the notion of reduction in counting world?
+\begin{description}
+\item{\textbf{Attempt 1:}} Let A,B be two languages. In decision world
+$A\leq ^p_m B$ if and only if
+	\begin{enumerate}
+		\item $x\in A\Longleftrightarrow \sigma\in B$.
+		\item $\sigma : \Sigma ^*\rightarrow\Sigma^*$ is
+polynomial time computable.
+	\end{enumerate} Translating the above statements into counting
+scenario.
+	\begin{enumerate}
+		\item $\sigma$ is polynomial time computable.
+		\item $f(x)=g(\sigma(x))$.
+	\end{enumerate} We know, $\#SAT$ and $\#CYCLE$ must also be
+hard. We must be able to show with the above discussed counting
+scenario that
+	\begin{center} $\#SAT(\phi)=\#CYCLE(\sigma(\phi))$
+	\end{center} Now if such a reduction exists, then we can solve
+$SAT$ by checking if $\#SAT(\phi)=\#CYCLE(\sigma(\phi))$, which can be
+done in polynomial time.  Here the problem is that one language is in
+$P$. But if we impose this strictness then in $\#P$ only $NP-Complete$
+problems will be hard.  But we already know $\#CYCLE$ is also hard.
+\item{\textbf{Attempt 2:}} $f\leq g$, $f\in FP^g$, if there exists a
+functional oracle turing machine (instead of going between
+$q_{yes}/q_{no}$, it has an output tape to write a value as
+output.)with queries to $g:\Sigma^*\rightarrow$ $\mathcal{N}$ that
+given any $x\in \Sigma^*$ can compute $f(x)$.  \\A function $g$ is
+$P-hard$ if $\forall f\in \#P, f\leq_m^p g$. $g$ is complete for $\#P$
+if $g\in \#P$ and $g$ is $\#P-hard$.
+\end{description}
+\begin{theorem} $\#SAT$ is $\#P-Complete$
+\end{theorem}
+	\begin{enumerate}
+		\item $\#SAT\in \#P$: $\exists$ a non-deterministic
+turing machine polynomial time which guesses assignments and verifies
+the same.
+		\item $\forall f\in \#P, f\leq_m^p \#SAT$: Let $f\in
+\#P$ via a machine $M$ such that $\forall x \in \Sigma^*,
+f(x)=\#acc_M(x)$
+	\end{enumerate}
+
+\begin{description}
+\item \textbf{Cook-Levin Theorem - Revisited.}
+	\begin{center} $L\in NP \Longrightarrow L\leq^p_m SAT$.
+	\end{center} Let $L\in NP$, via machine $M$ such that $x\in L
+\Longrightarrow M$ has an accepting path.  We construct $\phi_{(M,x)}$
+from computation history such that $ M$ has an accepting path implies
+$ \phi_{(M,x)}$ is satisfiable.  So for every accepting path, we have
+a satisfying assignment.  \\ ie., There is a one-to one mapping
+between the set of accepting paths and the set of satisfying
+assignments. The certificates correspods to the first set is the
+choice of non-deterministic bits and for the second set is the
+satisfying assignments. Such reductions are called \emph{Parsimonious
+reductions}.  \\ \emph{Note:} To prove NP-completeness, reduction need
+not be parsimonious.
+\end{description}
+\section{Perfect Matching in a graph}
+
+	\begin{definition}: Perfect Matching:
+
+	A bipartite graph $(X,Y,E)$ has a perfect matching if
+$\exists$ a subset of edges ($S$) such that each vertex has exactly
+one edge from $S$ incident on it.
+	\end{definition} \vspace{5mm}
+	\begin{definition}: Permanent of a Matrix For an $n\times n$
+matrix A, \\ Determinant of A, $Det(A)=\displaystyle\sum_{\sigma\text{
+is a permutation}\in S_n} (-1)^{sign(\sigma)}\prod_{i=1}^n
+A_{i,\sigma(i)}$ \\ Permanent of A,
+$Per(A)=\displaystyle\sum_{\sigma\in S_n} \prod_{i=1}^n
+A_{i,\sigma(i)}$
+	\end{definition}
+	\begin{description}
+	\item \textbf{Claim}: For a bipartite graph $G$, with $A$
+being the adjacency matrix in which rows are indexed by $x$ and
+columns are indexed by $y$. (Note that here $|x|=|y|$, otherwise graph
+doesnot have a perfect match.)
+	\end{description} For any $\sigma$,
+$\displaystyle\prod_{i=1}^n A_{i,\sigma(i)}=1$ if and only if $\sigma$
+gives a perfect matching in $G$.  \\ \emph{Note:}
+$A_{i,\sigma(i)}=1\Longleftrightarrow (i,\sigma(i))\in E$. Also the
+product is 1, if it holds for all.  \\ Now we can figure out whether
+there exixts a perfect matching or not. Checking if $G$ has a perfect
+matching is in $P$. Testing if $Per(A)$ is non-zero is also in $P$.
+
+\end{comment}
+\end{document}

@@ -1,0 +1,65 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsfonts,amsthm,complexity}
+\input{preamble.tex}
+\begin{document}
+
+\lecture{17}{Reductions to $\oplus$-\SAT : Amplified version}{Feb 6, 2012}{Jayalal Sarma}{Princy Lunawat}
+	
+%\theme{}
+%\lectureplan{}
+
+The last few lectures focus on the Toda's theorem which states
+that $\PH \subseteq \P^{\#\P}$. The first half of the proof of the theorem
+shows a randomized reduction from $\PH$ to $\parity \SAT$. 
+
+We proved the Valiant-Vazirani lemma which stated a randomized polynomial time algorithm that takes in a formula $\phi$ and produces a new formula $\psi$ such that it gives a {\em weak form} of a randomized reduction from $\SAT$ to $U\SAT$.  We have the following 
+\begin{eqnarray*}
+\phi \in \SAT & \implies & Pr \left( \psi \in \textrm{\sc U\SAT} \right) \ge \frac{1}{8n} \\
+\phi \notin \SAT & \implies & Pr \left( \psi \notin \SAT \right) = 1
+\end{eqnarray*}
+
+We also concluded that this gives a weak\footnote{The reduction is weak because the error probability($1-\frac{1}{8n}$) is much more than what is allowed in a randomized reduction ($\frac{1}{2}$)} randomized reduction from $\NP$ to $\parity\SAT$.  Now we show how to amplify the success probability in the case of the reduction to $\parity \SAT$. \footnote{Such an amplification is not known for the case of $U\SAT$.}
+
+Indeed, something special about $\parity$ is going to help us. In this lecture, we explore some properties of the $\parity$ quantifier which are used to come up with a formula $\phi''$ from a given formula $\phi \in \SAT $ such that $\phi'' \in \parity \SAT$ with high probability. We thereby deduce that $\NP <^m_r \parity \SAT$.
+
+\section{Parity Addition, Complementation and Multiplication}
+Given two boolean formulae, $\phi $ and $\phi'$, their parity can be added as follows: 
+\[\parity(\phi + \phi')(\bar z) = \parity(z_0 = 0 \wedge \phi) \vee \parity(z_1 = 0 \wedge \phi')  \]
+Similarly, the parity can be complemented as: 
+\[(z= 0 )\wedge (\sim x_1 \wedge \sim x_2 \wedge \ldots \wedge \sim x_n ) \vee (\phi \wedge z = 1)\]
+which is represented as $\phi + 1$.
+Multiplication of parity is obtained as: 
+\[\parity \phi(\bar z) \times \parity \phi'(\bar z) = \parity (\phi(\bar z) \wedge \phi'(\bar z)) \]
+\section{Randomized Reduction}
+
+	In our construction for the Valiant-Vazirani Lemma , we defined a formula $\psi_i = \phi \wedge (h_i(x)= 0^k)$
+where $x$ is an assignment of $\phi$.Now consider a formula $\phi' = \overset{l-1}{\underset{i = 0} \wedge } (\parity
+\psi_i)$. if Pr$\left[\psi_i \in \texttt{USAT} \right] \geq \frac{1}{8n}$, then Pr$\left[ \phi' \in \SAT\right] = 1 -
+\left(1 - \frac{1}{8n } \right)^l]$. We now come up with a formula $\phi''$ equivalent to $\phi'$ such that the parity
+of $\phi''$  is odd. that is, $\phi'' \in \parity \SAT$ conditioned on the probability that atleast one $\psi_i \in
+\parity \SAT $.\\
+For simplicity, consider $\psi_1$ and $\psi_1$, one of which is in $\parity \SAT$.We observe that both ,
+$\psi_1 + 1$ and $\psi_2 + 1$ cannot have an odd parity. Therefore,we have, 
+\begin{align*}
+\parity(\psi_1 + 1) .(\psi_2 + 1) =& 0\\
+\parity((\psi_1 + 1) .(\psi_2 + 1)+ 1) =& 1 
+\end{align*}
+Hence, $((\psi_1 + 1) .(\psi_2 + 1)+ 1) \in \parity \SAT$.In general , 
+$\overset{l-1}{ \underset{i = 0}\wedge} ((\psi_i + 1)+ 1) \in \parity \SAT$ which is our new formula $\phi''$
+equivalent to $\phi.$ Hence , Pr$\left[\phi'' \in \parity \SAT \right]$ is the same as that of atleast one $\psi_i$
+having and odd parity.
+ \[\phi \in \SAT \Rightarrow Pr \left[\phi'' \in \parity \SAT \right] =1 -\left(1 - \frac{1}{8n }\right)^l \]
+
+To amplify this probabilty to $1 - 2^{-m} $ we choose an appropriate value of $l$ such that,
+\[1 -\left(1 - \frac{1}{8n }\right)^l \geq 1 - 2^{-m} \]
+
+Hence, we have 
+\begin{eqnarray*}
+ \phi \in \SAT & \Rightarrow &  Pr\left[\phi'' \in \parity \SAT \right]\geq  1 - 2^{-m} \\
+ \phi \notin \SAT & \Rightarrow & Pr\left[\phi'' \in \parity \SAT \right] = 0 
+\end{eqnarray*}
+
+Hence, $\NP <^m_r \parity \SAT$.
+ 
+
+\end{document}

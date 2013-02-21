@@ -1,0 +1,135 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsfonts,amsthm,complexity}
+\newcommand{\USAT}{{\sf USAT}~}
+
+\input{preamble.tex}
+\begin{document}
+\lecture{15}{ Introduction to Toda's Theorem}{Jan 31, 2012}{ Jayalal Sarma M.N.}{Nilkamal Adak}
+\theme{Between $\P$ and $\PSPACE$.}
+\lectureplan{Introduce Toda's Theorem, give some relevant definitions 
+and construct a proof strategy for Toda's Theorem}
+
+There are two different way to generalize hard problems like optimization 
+problems.
+\begin{enumerate}
+ \item Non-determinism or quantification
+ \item Counting
+\end{enumerate}
+
+It was an important open question in 1980's about relative power of those 
+two approach, alternation and counting. There are various 
+classes are defined independently in those two different approach. But how 
+are those class comparable? In 1991, Toda came up with the following relation 
+among the two different world.
+
+\begin{theorem}
+ $PH \subseteq \P^{\#\P}$
+\end{theorem}
+This theorem take the whole quantification world to counting world. That is 
+we can solve any problem in PH in polynomial with an oracle access to 
+a $\#\P$-Complete problem. Before going to the proof of Toda's theorem lets 
+define the following.
+
+\begin{definition}
+$\exists.$ Operator.
+
+Let us consider the definition of $\NP$.
+\begin{center}
+$L \in \NP$ if $ \exists B \in \P$ such that 
+\[ x \in L \Longleftrightarrow \exists y \text{ such that } (x,y) \in B \]
+\end{center}
+\end{definition}
+So we can think $\exists$ as an operator and let us define it as follows
+
+Let $C$ be any class of languages. Define, 
+\begin{center}
+$ L \in \exists.C$  if $\exists B \in C$  such that
+$x \in L \Longleftrightarrow \exists y$ such that $(x,y) \in B$
+\end{center}
+So $\NP = \exists .\P$
+
+\begin{definition}
+BP. Operator \\
+Let us consider definition of the class $\BPP$ 
+
+$L \in \BPP$ if $\exists B \in \P$ such that 
+\begin{align*}
+x \in L & \Longrightarrow {\sf Pr_y}[(x,y) \in B ] \ge \frac{3}{4} \\
+x \notin L & \Longrightarrow {\sf Pr_y}[(x,y) \in B] \le \frac{1}{4}
+\end{align*}
+So similarly we can define BP. operator as 
+
+
+\begin{center}
+Let $C$ be a class of languages. 
+$L \in BP.C$ if $ \exists B \in$ C such that
+\begin{align*}
+x \in L & \Longrightarrow {\sf Pr}[(x,y) \in B]  \ge \frac{3}{4}\\
+x \notin L & \Longrightarrow {\sf Pr}[(x,y) \in B] \le \frac{1}{4}
+\end{align*}
+\end{center}
+So $\BPP = BP.\P$
+\end{definition}
+
+Now lets define the class $\oplus \P$:
+\begin{definition}
+L $\in \oplus \P$ if there is a branching machine $M$ such that
+\[ x \in L \Longrightarrow \#Acc_M(x) \text{ is odd} \]
+\end{definition}
+
+$\oplus\P$ can be considered as the class of decision problems corresponding 
+to the least significant bit of a $\#\P$-problem. Now the natural 
+question is ``Is $\NP \subseteq \oplus\P$?''.
+
+We will see that $NP$ problems are reduced to $\oplus\P$ in some extend.
+Lets now define Randomize Reduction as follows
+\begin{definition}
+$A \le B$ via a randomize reduction function $\sigma$ if 
+\begin{enumerate}
+\item  $\sigma$ is computable by choosing a random string 
+$y \in \{0,1\}^{p(n)}$.
+\item $x \in L \iff \sigma_y(x) \in B$ with high probability.
+\end{enumerate}
+\end{definition}
+
+We will see that $\NP$ problems are reduced to some $\oplus\P$ problem 
+via randomize reduction. More specifically $\NP \subseteq BP.(\oplus \P)$.
+Now we will develop the proof strategy for Toda's theorem. 
+We will proof the theorem in the following steps $\ldots$ 
+\[
+\NP \subseteq BP.(\oplus \P) \subseteq \BPP^{\oplus \P} \subseteq 
+\P^{\#\P}=\P^{\PP} \]
+Then by induction on the number of quantifiers we will show that the 
+entire $PH \subseteq \P^{\#\P}$.
+
+So our first step is to show $\NP \subseteq BP.(\oplus \P)$.
+
+To prove this claim let us define the following languages \ldots.
+\begin{definition} 
+\[ \oplus \SAT = \{ \phi : \# \text{ of satisfying assignment of }
+\phi \text{ is odd} \}\]
+\end{definition}
+
+Let us define the following promise problem \USAT as,
+\begin{definition}
+For all boolean formulas $\phi$,
+\begin{align*}
+\phi & \in \USAT \Longrightarrow \#SAT(\phi)=1\\
+\phi & \notin \USAT \Longrightarrow \#SAT(\phi)=0
+\end{align*}
+\end{definition}
+
+This is a promise problem as we will consider only those $\phi$ which 
+falls into above two cases. Now we introduce a very important result called 
+\emph{Valiant-Vazirani lemma} proved by Valiant and Vazirani in 1986.
+
+\begin{lemma}(Valiant-Vazirani Lemma) \\
+There exists a randomize reduction $\sigma_y$ such that
+\begin{align*}
+\phi & \in \SAT \iff Pr_y[\sigma_y(\phi) \in \USAT] \ge \frac{3}{4}\\
+\phi & \notin \SAT \iff Pr_y[\sigma_y(\phi) \in \USAT] \le \frac{1}{4}
+\end{align*}
+\end{lemma}
+We will prove this lemma in the next lecture and using this lemma 
+we will prove our first step $\NP \subseteq BP.(\oplus\P)$.
+\end{document}

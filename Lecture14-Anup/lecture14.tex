@@ -1,0 +1,102 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsfonts,amsthm,complexity}
+
+\input{preamble.tex}
+\begin{document}
+\lecture{14}{Karp-Lipton-Sipser Collapse Theorem}{Jan 30, 2012}{Jayalal Sarma M.N.}{Anup Joshi}
+%\theme{Between $\P$ and $\PSPACE$.}
+%\lectureplan{ Karp-Lipton-Sipser Theorem : If $\NP$ is contained in $\P/\poly$ then $\PH$ collapses to
+%$\Sigma_{2}$.}
+
+We showed that $\BPP \subseteq \P/\poly$, and as we argued $\P/\poly$ seems to be a huge class containing $\P$ and $\BPP$, and even some undecidable languages. A natural question is whether $\NP$ is also contained in $\P/\poly$. We show that both answers to this question has interesting consequences.
+
+Suppose we are able to prove that $\NP \not\subseteq \P/\poly$, then we are indeed are proving that $\NP \not\subseteq \P$. That is big !.
+
+Suppose we are able to prove that $\NP \subseteq \P/\poly$. Does it have any consequences?
+In this lecture, we will prove the Karp-Lipton-Sipser theorem, which says that if $\NP$ is
+contained in $\P/poly$, then the polynomial hierarchy collapses to $\Sigma_{2}$. It is believed
+that the polynomial hierarchy does not collapse, since the flavour of the question about each level of the hierarchy is about elimination of a quantifier, and is of a similar difficulty to to $\P$ vs $\NP$ question. 
+
+Summarising this discussion; we believe that $\NP \not\subseteq \P$, but we do not know how to prove it. But then, since $\P \subseteq \P/\poly$ is this not a harder problem to solve that $\P vs \NP$? Yes, but why do we even bother to address it when we do not know how to attack the easier question? As we will see later in the course (when we do circuit complexity) this class $\P/\poly$ provides this nice escape from the "combinatorics of a Turing machine" and helps us to prove theorems which we do not know how to prove otherwise. It was for precisely this reason that, in the definition of $\P/\poly$ we did not make the advice function even computable (to avoid references to Turing machines).
+
+We state the theorem.
+\begin{theorem}[{\bf Karp-Lipton-Sipser, 1980}]
+If $\NP \subseteq \P/\poly$, then $\PH$ collapses to $\Sigma_2$.
+\end{theorem}
+
+We prove the theorem by proving two lemmas. We first show that our assumption implies something much stronger. That is if $\NP \subseteq \P/\poly$ then not only $\NP$, but the entire $\PH$ will be in $\P/\poly$.
+
+\begin{lemma}
+ If $\NP \subseteq \P/\poly$, then $\PH \subseteq \P/\poly$.
+\end{lemma}
+\begin{proof}
+It suffices to show that $\Sigma_{k} \subseteq \P/poly$ for any $k$. We prove this by induction on $k$.
+For $k = 1$, it is trivially true, since $\Sigma_{1} = \NP$. Hence, the base case is true. Consider
+an $L \in \Sigma_{2}$, then $L \in \NP^{B}$ for some $B \in \NP$. But $\NP \subseteq \P/poly$ (by
+the induction hypothesis), hence, $\exists h : \mathbb{N} \rightarrow \{0, 1\}^*$ and $C \in P$,
+such that, $y \in B \leftrightarrow  (y, h(y)) \in C$. Now, membership in $B$ is decidable in
+polynomial time with the help of the advice function. Hence, we do not need to make oracle query to
+$B$ to resolve membership questions in $L$, we can embed the polynomial time computation of the
+oracle with advice function in the NTM for L itself. So we can say that, $L \in \NP$ with the advice
+function $h : \mathbb{N} \rightarrow \{0, 1\}^*$. We can rewrite it as $\exists h : \mathbb{N}
+\rightarrow \{0, 1\}^* \wedge C' \in \NP$ such that  $x \in L \leftrightarrow (x, h(|x|)) \in C'$.
+
+Now, what can we say about $C'$? We know that $C' \in \NP$, hence $C' \in \P/poly$. Hence there is
+an advice function for $C'$ also, so that membership in $C'$ is computable in polynomial time with
+the help of that advice function. That is, $\exists g : \mathbb{N} \rightarrow \{0, 1\}^* \wedge D
+\in \P$ such that  $y \in C' \leftrightarrow (y, g(|y|)) \in D$. Rewriting it we get:
+
+\begin{center}
+\begin{math}
+ (x, h(|x|)) \in C' \leftrightarrow (x, h(|x|), g(p(x))) \in D
+\end{math}
+\end{center}
+
+Hence from the above argument we see that $L \in \P/\poly$.
+\end{proof}
+
+Now we show that if any level of $\PH$ is in $\P\/poly$, then it essentially gives a way to express the acceptance condition using only two quantifiers. This is done in the following lemma.
+
+\begin{lemma}
+ For any $k > 2$, if $\Sigma_{k} \subseteq P/poly$, then $\Sigma_{k} \subseteq \Sigma_{2}$.
+\end{lemma}
+%\begin{proof-idea}
+\begin{proof}
+It suffices to show that $L \in \Sigma_{k} \implies L \in \Sigma_{2}$. For this, we take the
+language $\SAT_{k}$ which is a quantified boolean formula with at most $k$ alternating
+quantifiers. Since $\SAT_{k}$ is $\Sigma_{k}$-complete for any $k$, the lemma follows.
+
+Let us assume that for any $k > 2$, $\Sigma_{k} \subseteq \P/\poly$. Let $L \in \Sigma_{k}$, and
+since $\SAT_{k}$ is $\Sigma_{k}$-complete, then by our assumption, $\SAT_{k} \subseteq P/poly$. By
+the definition of $\P/\poly$, $\exists h : \mathbb{N} \rightarrow \{0, 1\}^* \wedge B \in \P$ such that
+$\phi \in \SAT_{k} \leftrightarrow (\phi, h(|\phi|)) \in B$. If $|\phi| = n$, then $h(n) \in \{0,
+1\}^{p(n)}$. Let us define a new function $w$ in the following way:
+
+\begin{center}
+\begin{math}
+ w = g(n) = (h(0), h(1), ..., h(n))
+\end{math}
+\end{center}
+For any $\phi \in \Sigma_{k}$, such that $|\phi|
+\leq n$, the string $w$ has the following properties:
+\begin{enumerate}
+\item $(0, w) \notin B$ $\wedge$ $(1, w) \in B$
+\item If $\phi = \exists y, \psi \wedge \phi \in \SAT_{k}$, then $(\psi |_{y = 0}, w) \in B \vee
+(\psi |_{y = 1}, w) \in B$.
+\item If $\phi = \forall y, \psi \wedge \phi \in \SAT_{k}$, then $(\psi |_{y = 0}, w) \in B \wedge
+(\psi |_{y = 1}, w) \in B$.
+\end{enumerate}
+Hence, $(\phi, w) \in B \implies 1, 2,$ and $3$ are satisfied.
+
+It is also true in the other direction. That is, if $1, 2, $ and $3 $ are satisfied, then in order to check if $\phi$ is true, it suffices to check if $(\phi, w) \in B$. We can show this inductively. When $\phi$ is either $0$ or $1$, then by $1$, the above claim is true. Suppose, $\phi = (\exists x) \psi$, then we can apply $2$ on $\psi$ to evaluate it.
+Otherwise, if $\phi = (\forall x) \psi$, then we can apply $3$ on $\psi$ to evaluate it. Thus, by recursively evaluating, we can reach upto the leaf where we apply $1$. Hence by a consistency check we can make sure that the advice does not give us a wrong answer, and indeed, if it gives a wrong answer to us, we can detect it at some point in the recursive evaluation. Note that we are using the self-reducibility property of $\SAT_k$ here.
+Thus we have proved that,
+\begin{center}
+ \begin{math}
+  \phi \in \SAT_{k} \leftrightarrow (\exists w, |w| \leq p(n)) (\forall \psi, |\psi| \leq n) (1
+\wedge 2 \wedge 3 \wedge (\phi, w) \in B).
+ \end{math}
+\end{center}
+\end{proof}
+
+\end{document}

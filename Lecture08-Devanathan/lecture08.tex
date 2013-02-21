@@ -1,0 +1,395 @@
+
+\newcommand{\sP}{\#\P} %% The class #P as it is not defined in complexity.sty
+\Lecture{Akshay Degwekar, Devanathan.T}{Jan 17, 2012}{8}{Permanent Computation is \sP-Complete}
+
+\newcommand{\per}{{\sf Per}} % Permanent is defined as an operator.
+\newcommand{\wt}{{\sf Weight}} % Weight is defined as an operator.
+\newcommand{\integer}{\mathbb{Z}}
+
+In this lecture, we define the permanent of a matrix and study the complexity of computing the permanent for various classes of matrices. Finally we prove a theorem by Valiant that $\per(A)$ is \sP-Complete.
+
+\begin{definition}
+\textbf{Permanent } Given a matrix $A_{n \times n}$, Let $S_n$ be the set of all permutations of $[n]$. Then
+\begin{equation}
+\per(A) = \sum_{\sigma \in S_n } \prod_{i=1}^n A_{i,\sigma(i)} 
+\end{equation}
+\end{definition}
+
+Earlier, we have seen a characterization of the permanent as the number of perfect matchings in a graph G. To prove the result, we characterize the permanent using \textbf{Cycle Covers}.
+
+\begin{definition}
+\textbf{Cycle Cover } A Cycle Cover $C$ of a directed graph G is a set of pairwise disjoint simple cycles such that each vertex lies in exactly one cycle in $C$.
+
+Note that we allow self-loops as simple cycles.
+
+\xymatrix{
+		  & 3 \ar[dr]&	            &   	&	7\ar[dr] \\
+2 \ar[ur]& 		 &4\ar[dl]\ar[r]&6\ar[ur]  && 8\ar[dl] \\
+&1 \ar[ul]&&&5\ar[ul]&\\}
+Has a cycle cover $\big{\{}\{1,2,3,4\},\{5,6,7,8\}\big{\}}$.
+
+\begin{definition}
+\textbf{Weight of a Cycle Cover} Given a Graph $G(V,E)$, let $C={C_1, C_2, \dots C_l}$ be any cycle cover
+\begin{equation}
+\textbf{Weight of Cycle - } \wt(C_i) = \prod_{e\in E}w(e)
+\end{equation}
+\begin{equation}
+\textbf{Weight of Cycle Cover - } \wt(C_i) = \prod_{c\in C}\wt(c)
+\end{equation}
+\end{definition}
+
+
+%%That is, In a graph $G(V,E)$, $C = {C_1, C_2, \dots C_l}$ is a cycle cover iff $\forall i,j \quad C_i\cap C_j = \phi$ and $v\in V, \, \exists ! j $ such that $•$ $C_j$ is a 
+
+\end{definition}
+
+\begin{lemma}
+Let $G(V,E)$ be a graph with adjacency matrix $A$. 
+$A \in \mathbb{Z}^{n\times n}$. Then 
+\begin{equation}
+	\per(A) = \sum_{\substack{C \text{ is a} \\ \text{Cycle Cover}}} \wt(C)
+\end{equation}
+\end{lemma}
+\begin{proof}
+Consider a single term from the permanent - $\sum^n_{i=1}A_{i,\sigma(i)}$.
+
+We can view $\sigma$ as a cycle cover as follows. 
+
+First we decompose $\sigma$ into cycles of the form $a, \sigma(a), \sigma^2(a)\dots \sigma^k(a) = a$. 
+
+Now each cycle in the permutation can be viewed as a cycle in the graph G. The edges being $\big{\{} (1, \sigma(1)),(2, \sigma(2)), \dots (n, \sigma(n)) \big{\}}$.
+
+This is the required cycle cover. There is a bijective correspondence between the permutations and the cycle covers. 
+
+Note, some of the cycle covers generated from permutation might not be valid that is some edges are absent. In that case, we just see that their weight is 0 as $A_{i,j} = 0$ for the edge $(i,j)$ not present. 
+
+And in the case that it is a valid cover, $\wt(C) = \prod_{i\in[n]}A_{i,\sigma(i)}$, because both of them are exactly the product of the corresponding edges.
+
+This completes the proof.
+\end{proof}
+
+%%%%%%%%%%%%%%%%Some explanation and notes are required here.
+
+\begin{exercise}
+Let $\mathbb{Z}_+$ denote the non negative integers.
+Using the previous construction involving Weighted Matching, 
+show that for $A\in \mathbb{Z}_{+}^{n\times n}, \per(A)\in \FP^\sP$.
+
+ This problem is also a part of the first problem set.
+\end{exercise}
+
+
+\begin{exercise}
+Is the reduction from $\SAT$ to $3\SAT$ parsimonious? If not, show that $\#3\SAT$ is $\sP-complete$. 
+\end{exercise}
+
+%%%%%Some embellishment might be needed here.
+Now, we move towards the final part of the lecture - the result by Valiant, that $Per$ is $\sP-Hard$. The proof given here is due to Del.... %add the citations here for both the papers.
+We will show this by using a gadget construction.
+
+\begin{theorem}
+$\#3\SAT\in \FP^{\per}$
+\end{theorem}
+\begin{proof}
+Consider a formula $\phi $ in $3\SAT$. $\phi = C_1\wedge C_2 \dots C_m$ where $C_i = l_{i,1}\vee l_{i,2} \vee l_{i,3}$.
+
+We will construct a directed graph $G$ such that $A_G$ is the adjacency matrix of $G$, such that $A_G \in \{-1,0,1\}^{n\times n}$ and also, $\per(A_G)=(-2)^k(\#\phi)$ where $(\#\phi)$ is the number of satisfying assignments of $\phi$ and $k$ is a quantity that we specify later.
+
+\begin{lemma}
+Let $\#x$ be the number of times a variable $x$ occurs in $\phi$. 
+
+Then $\phi$ can be converted to $\phi'$ such that $\forall x$, $k = \#x=\# \overline{x}$ and $\#phi = \# phi'$
+\end{lemma}
+
+\begin{proof}
+ We first observe that if $\# x \not = \# \overline{x}$. Then this imbalance can be removed by adding terms of the form $(x\vee x\vee \overline{x})$ and/or $(x\vee \overline{x}\vee \overline{x})$ because they add or decrease the relative number of $x$ compared to $\overline{x}$.
+ 
+ Now, we assume that $\forall x, \#x = \# \overline{x}$.
+ Now to compensate for relative differences between $x, y$ we add terms of the form $(x\vee \overline{x}\vee \overline{y})\wedge (x\vee \overline{x}\vee \overline{y})$ to increase the number of $x$ and the other way to decrease.
+ 
+ And we just note that the number of solutions is invariant because each of the added terms are always true.
+ 
+ This completes the lemma.
+ \end{proof}
+  
+  We will be constructing the graph from three gadgets - Variable Gadget, Clause Gadget and the Equality Gadget.
+
+%%% The gadgets  
+\begin{figure}[h!]
+\centering
+%%%%%%%Variable Gadget
+\begin{subfigure}[b]{0.3\textwidth}
+\xymatrix{ 
+	{\bullet}  \ar @/_/ [dd]_x  \ar @/^/ [dd]^{\overline{x}} \\ \\
+	{\bullet} \ar [uu]}
+	\caption{Variable Gadget}
+\end{subfigure} 
+%%%%%%%Clause Gadget
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+ \xymatrix{ 
+	 & {\bullet}  \ar @/^/ [d]   \ar @/_/ [ddl]_{\overline{l_1}} & \\ 
+	 & {\bullet}  \ar @/^/ [u]  \ar @/^/ [dl]  \ar @/^/ [dr] & \\
+{\bullet}\ar @/_/ [rr]_{\overline{l_3}} \ar @/^/ [ur] & & {\bullet}  \ar @/^/ [lu] \ar @/_/ [uul]_{\overline{l_2}} \\	
+	}
+	\caption{Clause Gadget}
+\end{subfigure}
+%%%%%%%Equality Gadget
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+ \xymatrix{ 
+	\ar @/_/[ddr] & & {\bullet} \ar@(ul,ur)^{-1} \ar @/_/[ddr] \ar @/_/ [ddl]& & \ar @/^/[ddl] \\ 
+	\\
+	\ar @/^/[r] & {\bullet}  \ar@(dl,dr)_{1}\ar @/_/ [uur]  \ar @/_/ [rr] & &  {\bullet}  \ar @/_/[uul]  \ar @/_/[ll] \ar@(dl,dr)_{1} & \ar @/_/[l] }
+	
+	\caption{Equality Gadget}
+\end{subfigure}
+\caption{The Gadgets}
+\label{fig1Gadgets}
+\end{figure}
+
+Now, we consider the construction of the graph.
+
+For each variable pair $(x, \overline{x})$ we have one variable gadget. Each clause has a Clause Gadget and the equality gadget is used to join each variable with all the clauses the variable is in.
+
+The equality gadget is represented as a black box as follows -
+\begin{figure}[h!]
+\centering
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+ \xymatrix{ 
+	\ar @/_/[ddr] & & {\bullet} \ar@(ul,ur)^{-1} \ar @/_/[ddr] \ar @/_/ [ddl]& & \ar @/^/[ddl] \\ 
+	\\
+	\ar @/^/[r] & {\bullet}  \ar@(dl,dr)_{1}\ar @/_/ [uur]  \ar @/_/ [rr] & &  {\bullet}  \ar @/_/[uul]  \ar @/_/[ll] \ar@(dl,dr)_{1} & \ar @/_/[l] }
+	
+	\caption{Equality Gadget}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+\xymatrix{ 
+	\ar @/_/[drr] & \ar @{-} [rrr] \ar @{-} [dd]& & &\ar @{-} [dd] & \ar @/^/[dll]\\
+ & & \ar @/_/[dll]&\ar @/^/[drr] & & \\
+ & \ar @{-} [rrr]& & & &\\
+}	
+	\caption{Equality Gadget Representation}
+\end{subfigure}
+\caption{Equality Gadget Blackbox representation}
+\label{fig:EqBlackbox}
+\end{figure}
+
+The way we connect a variable and a clause is shown in the next figure. Here $\overline{x}$ is the literal $l_1$ in the clause. 
+
+\begin{figure}[h!]
+\centering
+
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+\xymatrix{ 
+{a}  \ar @/_/ [dd]_x  \ar @/_/[drr]^{u} & \ar @{-} [rrr] \ar @{-} [dd]& & &\ar @{-} [dd] &  & 
+{\bullet} \ar @/^/[dlll]^{u'}  \ar @/^/ [d] &  \\ 
+ & & \ar @/_/[dll]^{v} &\ar @/^/[drr]^{v'} & &  &  
+{\bullet}  \ar @/^/ [u]  \ar @/^/ [dl]  \ar @/^/ [dr] & \\
+{b} \ar [uu] & \ar @{-} [rrr]& & & &
+{\bullet} \ar @/_/ [rr]^{\overline{l_3}} \ar @/^/ [ur] & & {\bullet} \ar @/_/ [uul]^{\overline{l_2}}  \ar @/^/ [lu] \\	
+}	
+\end{subfigure}
+\caption{Connection between variables and clauses.}
+\label{VarClauseConnection}
+\end{figure}
+
+When the same variable appears in multiple clauses, we split the edge representing the variable and attach multiple equality gadgets. The next figure shows the split.
+
+\begin{figure}[ht!]
+\begin{subfigure}[b]{0.3\textwidth}
+\xymatrix{ 
+	{\bullet}  \ar @/_/ [ddd]_{\overline{x}}  \ar @/_/ [dr] & & & &  \\ 
+& Equality Gadget \ar @/_/ [d] \ar @/_/ [rr] & & Clause Gadget \ar @/_/ [ll]& &\\
+& Equality Gadget  \ar @/_/ [dl] \ar @/_/ [rr] & & Clause Gadget \ar @/_/ [ll]& & \\
+	{\bullet} \ar [uuu]}
+	\label{fig:subfigure1}
+\end{subfigure}
+	\caption{One variable occurring in multiple clauses.}
+\end{figure}
+
+This essentially completes the construction. We will prove the correctness of the construction in a series of claims.
+\begin{claim}
+Any cycle cover can either use the edge $x$ or $\overline{x}$ in the variable gadget, but not both.
+\end{claim}
+\begin{proof}
+If a cycle cover used both the edges, then the vertices would be covered twice. 
+\end{proof}
+
+\begin{claim}
+Each assignment corresponds to atleast one cycle cover. 
+\end{claim}
+\begin{proof}
+For each variable, choose $x$ or $\overline{x}$ based on the assignment. And for each clause choose the cycle $l_1 \rightarrow l_2 \rightarrow l_3$ and choose self-loops everywhere else.
+\end{proof}
+
+We will derive a much precise correspondence in the remaining proof.
+
+
+\begin{claim}
+In any cycle cover C, either both $u,v$ are used, or neither $u,v$ are used.
+\end{claim}
+\begin{proof}
+The proof is just a verification, We see in \ref{VarClauseConnection} that if the edge $u$ is used, edge $(b,a)$ will have to be used, and to complete a cycle, we will need $v$ to complete the cycle as the edge $x$ cannot be used. 
+
+The proof holds unmodified for edges $u',v'$ too.
+\end{proof}
+
+\begin{claim}
+If both $u,v$ and $u',v'$ edges are used in the cycle cover, then the $-1$ valued self-loop has to be chosen in the cycle cover. 
+\end{claim}
+
+\begin{claim}
+If edges $u,v$ are used while $u',v'$ are not used, the corresponding Cycle Covers contribute weight 0.
+\end{claim}
+\begin{proof}
+We just observe that there are two components one contributing $+1$ and the other as $-1$ in the cycle weight. Cycle covers are marked in double lines.
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+ \xymatrix{ 
+	\ar @{=>} @/_/[ddr]^{u}  & & {\bullet} \ar@(ul,ur)^{-1} \ar @{=>}@/_/[ddr] \ar   @/_/ [ddl]& & \ar @/^/[ddl]_{u'} \\ 
+	\\
+	\ar @{<=} @/^/[r]_{v} & {\bullet}  \ar@(dl,dr)_{1}\ar  @/_/ [uur]  \ar @/_/ [rr] & &  {\bullet}  \ar @{=>} @/_/[uul]  \ar @/_/[ll] \ar@(dl,dr)_{1} & \ar @/_/[l]^{v'} }
+	\caption{Weight +1}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+ \xymatrix{ 
+	\ar @{=>}@/_/[ddr]^{u}  & & {\bullet} \ar@{=>}@(ul,ur)^{-1} \ar @/_/[ddr] \ar @/_/ [ddl]& & \ar @/^/[ddl]_{u'} \\ 
+	\\
+	\ar @{<=}@/^/[r]_{v} & {\bullet}  \ar@(dl,dr)_{1}\ar @/_/ [uur]  \ar @/_/ [rr] & &  {\bullet}  \ar @/_/[uul]  \ar @/_/[ll] \ar@{=>}@(dl,dr)_{1} & \ar @/_/[l]^{v'} }
+	\caption{Weight -1}
+\end{subfigure}
+\caption{Only one of the two sets of edges are present}
+\end{figure}
+\end{proof}
+
+
+\begin{claim}
+If both $u,v$ and $u',v'$ are not used, then the Cycle Covers have a contribution of 2 from this gadget. 
+\end{claim} 
+\begin{proof}
+The figure \ref{Fig6} contains all the possible cycle covers of the gadget. Their contributions sum upto 2.
+\begin{figure}[h]
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+ \xymatrix{ 
+	\ar  @/_/[ddr]^{u}  & & {\bullet} \ar @{=>}@(ul,ur)^{-1} \ar @/_/[ddr] \ar   @/_/ [ddl]& & \ar @/^/[ddl]_{u'} \\ 
+	\\
+	\ar  @/^/[r]_{v} & {\bullet}  \ar @{=>}@(dl,dr)_{1}\ar  @/_/ [uur]  \ar @/_/ [rr] & &  {\bullet}  \ar @/_/[uul]  \ar @/_/[ll] \ar @{=>}@(dl,dr)_{1} & \ar @/_/[l]^{v'} }
+	\caption{Weight -1}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+ \xymatrix{ 
+	\ar @/_/[ddr]^{u}  & & {\bullet} \ar@{=>}@(ul,ur)^{-1} \ar @/_/[ddr] \ar @/_/ [ddl]& & \ar @/^/[ddl]_{u'} \\ 
+	\\
+	\ar @/^/[r]_{v} & {\bullet}  \ar@(dl,dr)_{1}\ar @/_/ [uur]  \ar@{=>}@/_/[rr] & &  {\bullet}  \ar @/_/[uul]  \ar@{=>}@/_/[ll] \ar@(dl,dr)_{1} & \ar @/_/[l]^{v'} }
+	\caption{Weight -1}
+	\end{subfigure}
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+ \xymatrix{ 
+	\ar  @/_/[ddr]^{u}  & & {\bullet} \ar @(ul,ur)^{-1} \ar @{=>}@/_/[ddr] \ar   @/_/ [ddl]& & \ar @/^/[ddl]_{u'} \\ 
+	\\
+	\ar  @/^/[r]_{v} & {\bullet}  \ar @{=>}@(dl,dr)_{1}\ar  @/_/ [uur]  \ar @/_/ [rr] & &  {\bullet}  \ar @{=>}@/_/[uul]  \ar @/_/[ll] \ar @(dl,dr)_{1} & \ar @/_/[l]^{v'} }
+	\caption{Weight 1}
+\end{subfigure}	
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+ \xymatrix{ 
+	\ar  @/_/[ddr]^{u}  & & {\bullet} \ar @(ul,ur)^{-1} \ar @/_/[ddr] \ar@{=>}@/_/ [ddl]& & \ar @/^/[ddl]_{u'} \\ 
+	\\
+	\ar  @/^/[r]_{v} & {\bullet}  \ar@(dl,dr)_{1}\ar  @{=>}@/_/ [uur]  \ar @/_/ [rr] & &  {\bullet}  \ar @/_/[uul]  \ar @/_/[ll] \ar @{=>}@(dl,dr)_{1} & \ar @/_/[l]^{v'} }
+	\caption{Weight 1}
+\end{subfigure}	
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+ \xymatrix{ 
+	\ar  @/_/[ddr]^{u}  & & {\bullet} \ar @(ul,ur)^{-1} \ar @/_/[ddr] \ar@{=>}@/_/ [ddl]& & \ar @/^/[ddl]_{u'} \\ 
+	\\
+	\ar  @/^/[r]_{v} & {\bullet}\ar@(dl,dr)_{1}\ar@/_/ [uur]\ar@{=>}@/_/ [rr] & &  {\bullet}  \ar@{=>}@/_/[uul]  \ar @/_/[ll] \ar @(dl,dr)_{1} & \ar @/_/[l]^{v'} }
+	\caption{Weight 1}
+\end{subfigure}	
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+ \xymatrix{ 
+	\ar@/_/[ddr]^{u}  & & {\bullet} \ar@(ul,ur)^{-1} \ar@{=>}@/_/[ddr] \ar@/_/ [ddl]& & \ar @/^/[ddl]_{u'} \\ 
+	\\
+	\ar  @/^/[r]_{v} & {\bullet}\ar@(dl,dr)_{1} \ar@{=>}@/_/[uur] \ar@/_/[rr] & &  {\bullet}\ar@/_/[uul]  \ar@{=>}@/_/[ll] \ar@(dl,dr)_{1} & \ar@/_/[l]^{v'} }
+	\caption{Weight 1}
+\end{subfigure}	
+\caption{The weights sum upto 2}
+\label{Fig6}
+\end{figure}
+\end{proof}
+
+\begin{claim}
+	Weight of each cycle cover is $(-2)^{kn}$
+\end{claim}
+\begin{proof}
+We want to claim that if a variable $x$ is assigned value $1$, then all the equality gadgets for $x$ will contribute $1$ to the weight because $u,v$ and $u',v'$ will both be a part of the cycle cover for each of the gadgets, if just one pair is in the cycle cover, we have seen that those covers would contribute 0 to the weight. 
+
+Also, the gadgets that correspond to $\overline{x}$ will not have either $u,v$ or $u',v'$ being used - because, $u,v$ cannot be used as $x$ edge will be used, hence $\overline{x}$ cannot be used. Now, if $u',v'$ are used, those cycles will have 0 weight as seen in the observation.
+
+So, the only possibility there is both $u,v$ and $u',v'$ are not used. In that case, the contribution would be $2$ for each gadget. As there are $k$ such gadgets, we will have a contribution of $2^k$ from these. 
+
+So, multiplying them would give us, that each variable pair $x,\overline{x}$ contribute exactly $(-2)^k$ to the weight. Hence the cycle cover would have a weight of exactly $(-2)^{kn}$.
+
+So, We sum them up over all the possible assignments to get the required result. This completes the proof.
+
+\end{proof}
+
+So, we have the result -
+\begin{equation}
+{\sum_{\text{C is a Cycle Cover}} \wt(C) }= \per_{-1,0,1}(A)
+\end{equation}
+
+Hence computing $\#\SAT$ reduces to computing $\per_{-1,0,1}$. This completes the proof. 
+\end{proof}
+
+Now we will first show that $\per_{-1,0,1}$ reduces to $\per_{0,1,\dots n}$ and finally show that $\per_{0,1,\dots n}$ reduces to $\per_{0,1}$ and hence completing the theorem.
+
+\begin{theorem}
+$\per_{-1,0,1} \in \FP^{\per_{0,1,\dots n}}$.
+\end{theorem}
+\begin{proof}
+ The first thing we observe is that all the -1 terms in the adjacency matrix $A$ represent self-loops because in the construction, $-1$ was the edge weight of only one self-loop.
+ 
+ Consider $\per(A)$ as a polynomial in $x$ where each $-1$ is replaced by $x$ denoted by $p(x)$ 
+ 
+ Now we just observe that, using ${\per_{0,1,\dots n}}$ as an oracle, we can find $p(0), p(1), ... p(n)$. Also, degree of p $\leq n$ because x occurs only in the diagonal entries, hence only n $x $ can be present. 
+ 
+ So, now we just use Lagrange Interpolation to find the polynomial $p$. This can be done in poly time. Once this is done, $\per_{-1,0,1}(A) = p(-1)$, which can be computed easily.
+ 
+ This completes the reduction.
+\end{proof}
+
+In the final reduction, we show that $\per_{0,1,\dots n} \in \FP^{\per_{0,1}}$, and that $\per_{0,1}$ is as hard as the other $\per$ computations. 
+
+\begin{theorem}
+$\per_{0,1,\dots n} \in \FP^{\per_{0,1}}$
+\end{theorem}
+\begin{proof}
+This proof involves substituting the $-1$ self-loop with a gadget so that we can compute the values of the polynomial $p(x)$ at points $x=0, x=1, \dots x=n$.
+
+The gadget we use is - 
+Consider any $a = (a_k, a_{k-1}\dots a_{0})_2$ in base $2$ where $a\in \{0, 1, \dots n\}$. Now we want to replace the self-loop of weight $a$ with the gadget, so that the gadget contributes exactly $k$ weight to the Cycle cover. 
+
+\begin{figure}[ht!]
+\xymatrix{
+\ar[r]^{1} & \ar@/^/[d]^{a_0} \ar@/_/[r]^{1} \ar@/^/[r]^{1} & \ar@(ul,ur) \ar@/^/[dl]^{a_1} \ar@/_/[r]^{1} \ar@/^/[r]^{1}  & \ar@(ul,ur) \ar@/^/[dll]^{a_2} \ar@[--][r] & \ar@(ul,ur) \ar@/^/[dlll]^{a_{k-1}}   \ar@/_/[r]^{1} \ar@/^/[r]^{1} & \ar@(ul,ur) \ar@/^/[dllll]^{a_{k}} \\ 
+& \ar[ul]^{1} & & \\
+}
+\end{figure}
+
+The gadget has precisely $n$ cycles of weight $1$ each. This gadget can be used to replace the self loop and then query the $\per_{0,1}$ oracle. 
+
+This completes the reduction. Hence proved.
+\end{proof}
+
