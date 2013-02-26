@@ -8,8 +8,10 @@
 
 In this lecture, we define the permanent of a matrix and study the complexity of computing the permanent for various classes of matrices. Finally we prove a theorem by Valiant that $\per(A)$ is \sP-Complete.
 
+\section{Definitions}
 \begin{definition}
-\textbf{Permanent } Given a matrix $A_{n \times n}$, Let $S_n$ be the set of all permutations of $[n]$. Then
+\textbf{Permanent } Given a matrix $A_{n \times n}$, Let $S_n$ be the set of
+all permutations of $\{1,2,\ldots,n\} = [n]$. Then
 \begin{equation}
 \per(A) = \sum_{\sigma \in S_n } \prod_{i=1}^n A_{i,\sigma(i)} 
 \end{equation}
@@ -55,36 +57,43 @@ Consider a single term from the permanent - $\sum^n_{i=1}A_{i,\sigma(i)}$.
 
 We can view $\sigma$ as a cycle cover as follows. 
 
-First we decompose $\sigma$ into cycles of the form $a, \sigma(a), \sigma^2(a)\dots \sigma^k(a) = a$. 
+First we decompose $\sigma$ into cycles of the form $a, \sigma(a),
+\sigma^2(a)\dots \sigma^k(a) = a$. Now each cycle in the permutation can be
+viewed as a cycle in the graph G, the edges being 
+\[ \big{\{} (1, \sigma(1)),(2, \sigma(2)), \dots (n, \sigma(n)) \big{\}} \]
+This is the required cycle cover. 
 
-Now each cycle in the permutation can be viewed as a cycle in the graph G. The edges being $\big{\{} (1, \sigma(1)),(2, \sigma(2)), \dots (n, \sigma(n)) \big{\}}$.
+For the other direction, some of the cycle covers generated from permutation
+might not be valid as some edges are absent. In that case, we just see that 
+their weight is 0 as $A_{i,j} = 0$ for the missing edge $(i,j)$. And in the 
+case that it is a valid cover, $\wt(C) = \prod_{i\in[n]}A_{i,\sigma(i)}$, because both of them are exactly the product of the corresponding edges.
 
-This is the required cycle cover. There is a bijective correspondence between the permutations and the cycle covers. 
-
-Note, some of the cycle covers generated from permutation might not be valid that is some edges are absent. In that case, we just see that their weight is 0 as $A_{i,j} = 0$ for the edge $(i,j)$ not present. 
-
-And in the case that it is a valid cover, $\wt(C) = \prod_{i\in[n]}A_{i,\sigma(i)}$, because both of them are exactly the product of the corresponding edges.
-
-This completes the proof.
+This shows a bijective correspondence between the permutations and the cycle
+covers which completes the proof.
 \end{proof}
 
 %%%%%%%%%%%%%%%%Some explanation and notes are required here.
 
 \begin{exercise}
 Let $\mathbb{Z}_+$ denote the non negative integers.
-Using the previous construction involving Weighted Matching, 
-show that for $A\in \mathbb{Z}_{+}^{n\times n}, \per(A)\in \FP^\sP$.
+Using the previous construction involving cycle covers, 
+show that for $A\in \mathbb{Z}_{+}^{n\times n}, \per(A)\in \FP^{\sP}$.
 
- This problem is also a part of the first problem set.
+% This problem is also a part of the first problem set.
 \end{exercise}
 
 
 \begin{exercise}
-Is the reduction from $\SAT$ to $3\SAT$ parsimonious? If not, show that $\#3\SAT$ is $\sP-complete$. 
+Is the reduction from $\SAT$ to $3\SAT$ parsimonious? If yes, show that
+$\#3\SAT$ is $\sP$-complete. 
 \end{exercise}
 
-%%%%%Some embellishment might be needed here.
-Now, we move towards the final part of the lecture - the result by Valiant, that $Per$ is $\sP-Hard$. The proof given here is due to Del.... %add the citations here for both the papers.
+\section{Proof of harndess of Permanent computation}
+%Now, we move towards the final part of the lecture - the result by Valiant, that $Per$ is $\sP-Hard$. The proof given here is due to Del.... %add the citations here for both the papers.
+In this section, we show that computing permanant of a $0-1$ matrix is $\sP$
+complete. The result is due to Valiant~\cite{valiant79}. The proof presented
+here is from Dell. et.al~\cite{dell12}. 
+
 We will show this by using a gadget construction.
 
 \begin{theorem}
