@@ -1,25 +1,19 @@
-\documentclass[11pt]{article}
-\input{preamble.tex}
-\usepackage{amssymb,amsmath}
-\usepackage{clrscode}
-
-\begin{document}
-
-\lecture{No. 13}{Self Reducibility of $\SAT$, Complete problem for
-  $\Sigma_k^\P$}{January 28, 2012}{Jayalal Sarma M.N.}{Sajin Koroth}
-\theme{Polynomial Hierarchy and its relation to $\P/\poly$}
-\lectureplan{Recall that we introduced the advice based class $\P/\poly$
-  in the last lecture. We also saw that $\BPP \subsetneq \P/\poly$, and
-  by definition $\P \subsetneq \P/\poly$. But we don't know whether
-  $\NP\subsetneq \P/\poly$ or not. Hence if we could prove that $\NP
-  \not\subset \P/\poly$ then we would essentially be separating $\P$
-  from $\NP$. The reason why most of the complexity theorists believe $\NP
-  \not\subset \P/\poly$ is, if $\NP \subset \P/\poly$ then we would be
-  able to prove that $\PH=\Sigma_2^\P$, contrary to the common belief
-  that $\PH$ does not collapse. In today's lecture we will detail two
-  key ingredients needed for showing the above mentioned conditional
-  collapse of $\PH$, \textbf{a complete problem for $\Sigma_k^\P$} and
-  \textbf{self reducibility property of $\SAT$}}
+\Lecture{Sajin Koroth}{January 28, 2012}{13}{Self Reducibility of $\SAT$, Complete problem for  $\Sigma_k^\P$}
+%\theme{Polynomial Hierarchy and its relation to $\P/\poly$}
+%\lectureplan{
+Recall that we introduced the advice based class $\P/\poly$
+in the last lecture. We also saw that $\BPP \subsetneq \P/\poly$, and
+by definition $\P \subsetneq \P/\poly$. But we don't know whether
+$\NP\subsetneq \P/\poly$ or not. Hence if we could prove that $\NP
+\not\subset \P/\poly$ then we would essentially be separating $\P$
+from $\NP$. The reason why most of the complexity theorists believe $\NP
+\not\subset \P/\poly$ is, if $\NP \subset \P/\poly$ then we would be
+able to prove that $\PH=\Sigma_2^\P$, contrary to the common belief
+that $\PH$ does not collapse. In today's lecture we will detail two
+key ingredients needed for showing the above mentioned conditional
+collapse of $\PH$, \textbf{a complete problem for $\Sigma_k^\P$} and
+\textbf{self reducibility property of $\SAT$}
+ % }
 
 \section{Complete problem for the hierarchy}
 
@@ -118,31 +112,29 @@ for an un-satisfiable formula. But it might fail to construct a
 satisfying assignment for a satisfiable formula if the sub-routine is
 erroneous.
 
-
-\begin{codebox}
-\label{SAT_ASGN_ALGO}
-  \Procname{$\proc{SATISFYING-ASSIGNMENT}(\phi(x_1,\dots,x_n))$}
-  \li $\id{\psi(x_1,\dots,x_n)} \gets \phi(x_1,\dots,x_n)$
-  \li \For $i \gets 1$ \To $\id{n}$
-  \li \Do
-  \li $\id{\psi^{'}} \gets \psi(x_i=0)$
-  \li $\id{\psi^{''}} \gets \psi(x_i=1)$
-  \li \If $\proc(SATISFIABLE(\psi^{'}))$
-  \li \Then $\id{a_i} \gets 0$
-  \li       $\id{\psi} \gets \psi(0,x_2,\dots,x_n)$
-  \li \ElseIf $\proc(SATISFIABLE(\psi^{''}))$
-  \li \Then $\id{a_i} \gets 1$
-  \li       $\id{\psi} \gets \psi(1,x_2,\dots,x_n)$
-  \li \ElseNoIf
-  \li \Return $\const{impossible}$
-      \End
-  \li \If $\phi(a_1,\dots,a_n) = 1$ 
-  \li \Then \Return $(a_1,\dots,a_n)$
-  \li \Else \Return $\const{impossible}$
-      \End
-      \End
-\end{codebox}
-
-
-\end{document}
+% Could not be added due to conflict with clrs package. Needs to be rewritten
+% in algorithm 
+%\begin{codebox}
+%\label{SAT_ASGN_ALGO}
+%  \Procname{$\proc{SATISFYING-ASSIGNMENT}(\phi(x_1,\dots,x_n))$}
+%%  \li $\id{\psi(x_1,\dots,x_n)} \gets \phi(x_1,\dots,x_n)$
+%  \li \For $i \gets 1$ \To $\id{n}$
+%  \li \Do
+%  \li $\id{\psi^{'}} \gets \psi(x_i=0)$
+%  \li $\id{\psi^{''}} \gets \psi(x_i=1)$
+%  \li \If $\proc(SATISFIABLE(\psi^{'}))$
+%  \li \Then $\id{a_i} \gets 0$
+%  \li       $\id{\psi} \gets \psi(0,x_2,\dots,x_n)$
+%  \li \ElseIf $\proc(SATISFIABLE(\psi^{''}))$
+%  \li \Then $\id{a_i} \gets 1$
+%  \li       $\id{\psi} \gets \psi(1,x_2,\dots,x_n)$
+%  \li \ElseNoIf
+%  \li \Return $\const{impossible}$
+%      \End
+%  \li \If $\phi(a_1,\dots,a_n) = 1$ 
+%  \li \Then \Return $(a_1,\dots,a_n)$
+%  \li \Else \Return $\const{impossible}$
+%      \End
+%      \End
+%\end{codebox}
 

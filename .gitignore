@@ -32,3 +32,5 @@
 *.tdo
 *.xyc
 *.scr
+*/*.pdf
+*/*.backup

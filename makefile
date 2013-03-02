@@ -2,7 +2,7 @@ ECHO="/bin/echo"
 AWK="/usr/bin/awk"
 FILES=$$(ls */*.tex | grep lecture | sed -e 's/.tex$$//')
 
-all:
+all:populate
 	pdflatex main.tex
 
 clean:
