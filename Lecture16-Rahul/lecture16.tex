@@ -14,7 +14,7 @@ We also interpreted this in the following way; there is a randomized reduction f
 \section{Randomized Reduction from SAT to $\oplus$SAT}
 Define languages, 
 \begin{itemize}
-\item[]USAT=$\{\phi \mid \#\phi=1\}$
+\item[]USAT=$\{\phi \mid \#\phi=1\}$ \newline where $\#\phi$ is the number of satisfying assignments to the formula $\phi$
 \item[]$\oplus$SAT=$\{\phi \mid \exists k \in \mathbb{N}, \#\phi=2k+1\}$
 \end{itemize}
 
@@ -26,7 +26,7 @@ The lemma states the following reduction from $\SAT$ to $USAT$.
 There exists a randomized polynomial time algorithm that takes input $\phi$ and produces a formula $\psi_{\phi,y}$ (say $\psi$) such that,
 \begin{eqnarray*}
 \phi \in \SAT \implies Pr(\psi \in USAT) & \geq & \frac{1}{8n} \\
-\phi \not\in \SAT \implies Pr (\psi' \not\in \oplus\SAT] & = & 1
+\phi \not\in \SAT \implies Pr (\psi' \not\in USAT) & = & 1
 \end{eqnarray*}
 \end{lemma}
 
@@ -36,7 +36,7 @@ Clearly, $\psi \in$ USAT $\Rightarrow \psi \in \oplus$ SAT. In the other case si
 There exists a randomized polynomial time algorithm that takes input $\phi$ and produces a formula $\psi$ such that,
 \begin{eqnarray*}
 \phi \in \SAT \implies Pr(\psi \in \oplus\SAT) & \geq &  \frac{1}{8n} \\
-\phi \not\in \SAT \implies Pr (\psi \not\in \oplus\SAT] & = & 1
+\phi \not\in \SAT \implies Pr (\psi \not\in \oplus\SAT) & = & 1
 \end{eqnarray*}
 \end{corollary}
 
@@ -112,11 +112,11 @@ Considering the fact that $k \in \{0,1,...,n-1\}$ satisfies $2^k \leq |T| \leq 2
 \phi \in \SAT \implies \stackrel{Pr}{_{_{_{x}}}}[\psi_{\phi,x} \in USAT] \geq \frac{1}{8n}
 \]
 \[
-\phi \not\in \SAT \implies \stackrel{Pr}{_{_{_{x}}}}[\psi_{\phi,x} \not\in SAT] = 1
+\phi \not\in \SAT \implies \stackrel{Pr}{_{_{_{x}}}}[\psi_{\phi,x} \not\in USAT] = 1
 \]
 \end{proof}
 
-Now we make comments about amplification of success probability. Since the algorithm is one-sided error, an approach will be to simply repeat the experiment some $\ell$ times, and take the $\lor$ of the results. This however, causes loss of uniqueness of the assignment since different $h$ may make different $x$s to go to $0^k$. However, we can still preserve the parity with high probability that that results in the following amplification result which we state as a Lemma.
+Now we make comments about amplification of success probability. Since the algorithm is one-sided error, an approach will be to simply repeat the experiment some $\ell$ times, and take the $\lor$ of the results. This however, causes loss of uniqueness of the assignment since different $h$ may make different $x$s to go to $0^k$. However, we can still preserve the parity with high probability that results in the following amplification result which we state as a Lemma.
 
 \begin{lemma}
 There exists a randomized polynomial time algorithm that takes input $\phi$ and produces a formula $\psi'$ such that,
