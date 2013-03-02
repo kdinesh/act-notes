@@ -6,10 +6,10 @@
 \usepackage{tikz}
 \usetikzlibrary{calc,through,backgrounds,decorations.pathmorphing}
 
-\input{../stylefile/preamble.tex}
+\input{./preamble.tex}
 \begin{document}
-\lecture{18}{Proof of Toda's Theorem}{Feb 07, 2012}{ Jayalal Sarma M.N.}{Sunil K
-  S.}  \theme{Between P and PSPACE}
+\lecture{18}{Proof of Toda's Theorem}{Feb 07, 2012}{ Jayalal Sarma
+M.N.}{Sunil K.S., Kartik Abhinav}  \theme{Between P and PSPACE}
 \lectureplan{In this lecture we will be concluding the lectures on the
   theme of contrasting the power of counting to that of
   alternations. Today we will be proving the interesting result that
@@ -19,11 +19,11 @@
 \section{Valiant-Vazirani Lemma}
 We have already saw Valiant-Vazirani theorem which stated that :
 \begin{lemma} Valiant-Vazirani Theorem: There exists a probabilistic
-polynomial-time algorthm f such that for every n-variable boolean
+polynomial-time algorithm f such that for every n-variable boolean
 formula $\varphi$
 \begin{eqnarray*}
-  \varphi\in SAT\Rightarrow Pr[f(\chi)\in USAT] &\geq& \frac{1}{8n} \\
-  \varphi\notin SAT\Rightarrow Pr[f(\chi)\in SAT] &=& 0
+  \varphi\in SAT\Rightarrow Pr[f(\chi)\in \parity SAT] &\geq& \frac{1}{8n} \\
+  \varphi\notin SAT\Rightarrow Pr[f(\chi)\in \parity SAT] &=& 0
 \end{eqnarray*}
 \end{lemma}
 But to prove that $\PH \subseteq \BP(\parity\P)$ we will need
@@ -31,43 +31,51 @@ amplified version of this lemma.
 \begin{lemma}
 Valiant-Vazirani lemma (Amplified version): There exists a randomized
 algorithm which produce $\varphi$ from a given boolean formula $\phi$
-such that for a polynomila $q(n)$:
+such that for a polynomial $q(n)$:
 \begin{eqnarray*}
   x\in L \Rightarrow Pr[\varphi\in \parity SAT] &\geq&
   \left(1-\frac{1}{2^{q(n)}}\right) \\ 
-  x\notin L \Rightarrow Pr[\varphi\notin \parity SAT] &=& 1
+  x\notin L \Rightarrow Pr[\varphi\in \parity SAT] &\leq& \left(\frac{1}{2^{q(n)}}\right)
 \end{eqnarray*}
-\end{lemma} In the above construction, $\varphi=\phi\land h$, where
-$h$ is a hash function. Here $\varphi$ is independent on $\phi$ or its
-structure.  To find $h$, chosen from a good hash family, we just need
-to know the domain and range, which is $2^n$. Here $h$ depends only on
-$n$. Let $\tau(x,y)$ denote the choice of $h$ from the hash family
-based on the random string $y$.  Now we modify the lemma statements
-given above as:
-\begin{eqnarray*}
-  (\exists \phi) \phi\in  SAT\Rightarrow
-  Pr_y[\displaystyle\parity_x\phi\land\tau(x,y)] &\geq&
-  \left(1-\frac{1}{2^{q(n)}}\right) \\
-  (\lnot\exists \phi) \phi\notin  SAT\Rightarrow
-  Pr_y[\displaystyle\parity_x\phi\land\tau(x,y)] &=& 1
-\end{eqnarray*}
-where $\displaystyle\phi_x$ represents the parity of number of
-satisfying assignments.
+\end{lemma}
 
-Observations: Existing of a satisfying assignment for $\phi$ is
-equivalent to saying $\phi\in SAT$. Here we can talk about any
-$\phi$. That is $\phi$ can even have $\exists$ or $\forall$
-quantifiers. This gives a better handle since construction is
-completely oblivious of what $\phi$ is.
+\section{Toda's Theorem: $\PH\subseteq\P^{\#\P}$} Any problem in $\PH$
+can be solved by a $\P$ machine by making queries to a $\#\P$ oracle.\newline
 
-Claim: $\PH\subseteq\BP(\parity\P)$
+\textbf{Proof} \newline
+This theorem will be proved in two parts
+\begin{itemize}
+ \item 
+ $\PH\subseteq\BP(\parity\P)$
+ \item
+ $\BP(\parity\P) \subseteq \P^{\#P}$
+\end{itemize}
+
+% This part has been untouched. Should be modified
+\textbf{Claim}: $\PH\subseteq\BP(\parity\P)$
 \begin{proof} Proof by induction on the number of alterations, $k$.\\
   Basis: for $k=0$, we already have the result
   $\NP\subseteq\BP(\parity\P)$.\\ Assume the result for $k$. ie;
   $\Sigma_k$ or $SAT_k$ $\in \BP(\parity\P)$.\\ We need to prove that
   $SAT_{k+1}\in \BP(\parity\P)$.
-$$\phi\in SAT_k\Rightarrow Pr[\parity_z\phi\land\tau(x,z)]\geq(1-\frac{1}{2^{q(n)}})$$
-$$\phi\notin SAT_k\Rightarrow Pr[\parity_z\phi\land\tau(x,z)]=0$$
+
+  Consider a language L $\in \Sigma_{k+1}^{p}$, 
+  $$ x \in L \Leftrightarrow \exists y_{1} \forall y_{2} (y_{1},y_{2}) \in B$$ where $B \in \Sigma_{k}^{p}$
+  
+  From inductive hypothesis, there exists a formula $\phi(x)$ such that $B$ can be reduced to $\parity \SAT$. \\
+  Consider the formula ,
+  $$\phi_{1}(x,y_{1},y_{2}) = \phi(x) \wedge (h_{1}(y_{2}) = 0^{k_{2}}) \wedge (h_{2}(y_{1}) = 0^{k_{1}})$$
+  where $h_{i}(x)$ is chosen from a pairwise independent hash family. \newline
+  
+  Now, using the techniques seen in last lecture, reduce this formula $\phi_{1}(x,y_{1},y_{2})$ to a formula $\psi(x)$ in $\parity \SAT$. \newline
+  Hence, 
+    $$ x \in L \Leftrightarrow \psi(x) \in \parity \SAT$$
+    Therefore, from induction, $\PH \leq_{r} \parity \P$.\newline
+    $\PH \subseteq \BP(\parity \P)$
+  
+ \begin{comment} 
+ $$\phi\in SAT_k\Rightarrow Pr[\parity_z\phi\land\tau(x,z)]\geq(1-\frac{1}{2^{q(n)}})$$
+$$\phi\notin SAT_k\Rightarrow Pr[\parity_z\phi\land\tau(x,z)]\leq \frac{1}{2^{q(n)}}   $$
 Now, any $\phi '\in SAT_{k+1}$ can be written as $\phi
 '=\exists\sigma$ where $\sigma\in SAT_k$
 $$\phi '\in SAT_{k+1}\Rightarrow\exists\sigma\in SAT_k\mbox{ with } \sigma\in\Pi_k$$
@@ -75,15 +83,110 @@ $$\phi '\in SAT_{k+1}\Rightarrow\exists\sigma\in SAT_k\mbox{ with } \sigma\in\Pi
 Let $\sigma '=\exists(\lnot\varphi)$ where $\sigma=\lnot\varphi$\\
 $$\lnot(\forall\varphi)\Rightarrow\exists\sigma\Rightarrow Pr[\sigma '\in\parity SAT]\geq (1-\frac{1}{2^{q(n)}})$$
 $$\forall\varphi\Rightarrow\lnot\exists\sigma\Rightarrow Pr[\sigma '\notin\parity SAT]\geq (1-\frac{1}{2^{q(n)}})$$
-
+From inductive hypothesis,
 $$\forall\varphi\Rightarrow Pr[\sigma ''\in\parity SAT]\geq (1-\frac{1}{2^{q(n)}})$$
-$$\lnot\forall\varphi\Rightarrow Pr[\sigma ''\notin\parity SAT]\geq 1$$
+$$\lnot\forall\varphi\Rightarrow Pr[\sigma ''\notin\parity SAT]\geq (1-\frac{1}{2^{q(n)}})$$
 $$\varphi\rightarrow\varphi\land(h(y)=0^k)\rightarrow\varphi\land(h(y)=0^{k_1}\land h(x)=0^{k_2})$$
 $$\phi=\exists\forall\varphi$$
+\end{comment}
 
 \end{proof}
-\section{Toda's Theorem: $\PH\subseteq\P^{\#\P}$} Any problem in $\PH$
-can be solved by a $\P$ machine by making queries to a $\#\P$ machine.
+
+%End of untouched part
+
+\textbf{Claim}: $\BP(\parity\P) \subseteq \P^{\#\P}$
+
+Before proving the above claim, let us set up a following lemma. \newline
+
+Let $A \in \parity \P$, then by definition, \newline
+$$x \in A \implies \#acc_{M}(x) = -1~(mod~2)$$ 
+$$x \notin A \implies \#acc_{M}(x) = 0~(mod~2)$$
+
+But what Toda argued was that, not only does this hold true under modulo 2 operation, but under any modulo $2^{q(n)}$ operation where q(n) is a polynomial.
+
+\begin{lemma}
+ Let $A \in \parity \P$, then , \newline
+$$x \in A \implies \#acc_{M}(x) = -1~(mod~2^{q(n)})$$ 
+$$x \notin A \implies \#acc_{M}(x) = 0~(mod~2^{q(n)})$$
+ 
+\end{lemma}
+\begin{proof}
+ Let y = $\#acc_{M}(x)$,where M is the NDTM corresponding to the $\parity \P$ function f, such that f(x) = y. \newline
+ $$x \in A \implies y = -1~(mod~2^{q(n)})$$ 
+$$x \notin A \implies y = 0~(mod~2^{q(n)})$$
+ 
+ Now construct a polynomial m = $3y^{4}~+~4y^{3}$. Using the NDTM M(where $\#acc_{M}(x) = m$), construct a new NDTM M' such that,
+ $$\#acc_{M'}(x) = m$$
+ 
+  To construct such a NDTM, let us look at the following two constructions
+  \begin{itemize}
+   \item 
+    Construction of a machine M such that , $\#acc_{M}(x) = \#acc_{M_{1}}(x) + \#acc_{M_{2}}(x)$ \newline
+    Describe the NDTM M as its choice tree as follows : \newline
+    1) Create a new root node such that the machine can take two choices on it. \newline
+    2) On one of the choices, simulate the machine $M_{1}$.\newline
+    3) On the other choice, simulate machine $M_{2}$. \newline
+    4) Extend the leaves of the corresponding choice tree to balance the height. \newline
+    
+    This new choice tree will have $\#acc_{M}(x) = \#acc_{M_{1}}(x) + \#acc_{M_{2}}(x)$.
+    \item
+    Construction of a machine M such that , $\#acc_{M}(x) = \#acc_{M_{1}}(x) \times \#acc_{M_{2}}(x)$ \newline
+    Describe the NDTM M as its choice tree as follows : \newline
+    1) Create a choice tree of either machine $M_{1}$ or $M_{2}$. W.L.G., lets assume the choice tree of machine $M_{1}$. \newline
+    2) On each of the accept node of machine $M_{1}$, extend the tree downwards by simulating the machine $M_{2}$.\newline
+    3) On the reject nodes, extend the tree downwards to balance the height of the choice tree. \newline
+    
+    This new choice tree will have $\#acc_{M}(x) = \#acc_{M_{1}}(x) \times \#acc_{M_{2}}(x)$.
+    
+  \end{itemize}
+  
+  Using the above two constructions, a NDTM M' can be constructed from machine M. \newline \newline
+  Observe that, \newline
+   $$x \in A \implies y = -1~(mod~2^{2})$$ 
+   $$x \notin A \implies y = 0~(mod~2^{2})$$ 
+    via the NDTM M'
+    
+  Repeating the above procedure at the  $i^{th}$ iterations, we will have,
+    $$x \in A \implies y = -1~(mod~2^{2^{i}})$$ 
+    $$x \notin A \implies y = 0~(mod~2^{2^{i}})$$ 
+    
+  Hence, repeating the procedure for O($\log(q(n)$) iterations, we will have ,
+    $$x \in A \implies y = -1~(mod~2^{q(n)})$$ 
+    $$x \notin A \implies y = 0~(mod~2^{q(n)})$$ 
+  
+  
+  \textbf{Note}: \newline
+  An important observation in the proof is that, the height of the choice tree increases by a factor of 4 in every iteration. Hence, the height
+  of the choice tree in the final machine is $4^{\log(q(n))}$ , which is a polynomial. Hence, the running time of the finally obtained choice machine
+  is also polynomial and hence the function corresponding to it, still remains in $\parity \P$.
+\end{proof}
+
+Now, using the above lemma, lets prove $\BP(\parity\P) \subseteq \P^{\#\P}$ which will complete the proof of Toda's Theorem. \newline
+
+Consider $L \in \BP(\parity\P)$ \newline
+By definition,
+$$ Pr_{y\in \{0,1\}^{p(n)}} (x \in L \Leftrightarrow (x,y) \in A) \geq \frac{3}{4}$$ for some A $\in \parity \P$ \newline
+
+Consider h(x) = $|\{y:(x,y) \in A\}|$ \newline
+
+If we calculate the value of h(x) and estimate it to be greater than a fraction of $\frac{3}{4}$ , then accept x, else reject.\newline
+Hence, L $\in \P^{\#\P}$. \newline
+
+To estimate this value consider the function,
+$$ l(x) = \Sigma_{y\in \{0,1\}^{p(n)}} acc_{M}(x,y)$$
+This can be written as,
+$$ l(x) = \Sigma_{(x,y) \in A} acc_{M}(x,y) + \Sigma_{(x,y) \notin A} acc_{M}(x,y)$$
+$$ l(x) = (-1) \times h(x) + 0 (mod 2^{q(n)})$$
+$$ l(x) = -h(x) (mod 2^{q(n)})$$
+
+If we choose a large enough value of $2^{q(n)}$ , then we can determine value of h(x) uniquely from l(x). Formally, 
+ h(x) $< 2^{q(n)}$ \newline
+ 
+ We can easily see that function l(x) $\in \#\P$. i.e. Create an NDTM $M'$ , which first guesses nondeterministically a string $y \in \{0,1\}^{p(n)}$,
+ and simulates $M$ on $(x,y)$. The number of accepting paths of the machine $M'$ is precisely equal to l(x).
+
+
+\begin{comment}
 \begin{lemma}
 \label{lemma1} If $\mathcal{A}\in \parity\P$ then $\exists B$ such
 that for any polynomial $q$ and input $x$ of length $n$,
@@ -120,25 +223,6 @@ $M_1$ and $M_2$ in parallel.
 \item $\#acc_{M_3}(x)=\#acc_{M_1}(x)\times\#acc_{M_2}(x) $: By rnning
 $M_1$ and $M_2$ one after other.
 \end{itemize}
-\begin{comment} The following psuedocode represents the working of
-$M_2$ in a recursive form.  Non-deterministic Turing machine:
-$M_2(<x,i>)$\\ //$i$: Number of times $M_2$ executes $M_1$.\\
-\begin{enumerate}
-\item If $i=0$, then simulate $M_1(x)$
-\item Else if $i>0$
-	\begin{enumerate}
-	\item Nondeterministically choose an integer
-$m\in\{1,2,\cdots,7\}$
-	\item If $m\leq 4$ then let $k=3$ else let $k=4$
-	\item For $j=1$ to $k$ do
-		\begin{enumerate}
-		\item recursively run $M_2(<x,i-1>)$
-		\item if $M_2(<x,i-1>)$ rejects then reject and halt
-		\end{enumerate}
-	\item Accept and halt
-	\end{enumerate}
-\end{enumerate}
-\end{comment}
 
 Let $f(x,i)=\chi_{M_2}(<x,i>)$. It if clear that $f$ satisfies the
 recurrence relation given below:
@@ -192,90 +276,6 @@ string $y$ of length $p(|x|)$ and then simulate $M$ on $<x,y>$.
 Hence, $L\in P^{\#\P}$.
 \end{proof}
 
-\begin{comment} We saw $(\#P=FP)\Longrightarrow (P=PP)$ in decision
-world. Now what will be the notion of reduction in counting world?
-\begin{description}
-\item{\textbf{Attempt 1:}} Let A,B be two languages. In decision world
-$A\leq ^p_m B$ if and only if
-	\begin{enumerate}
-		\item $x\in A\Longleftrightarrow \sigma\in B$.
-		\item $\sigma : \Sigma ^*\rightarrow\Sigma^*$ is
-polynomial time computable.
-	\end{enumerate} Translating the above statements into counting
-scenario.
-	\begin{enumerate}
-		\item $\sigma$ is polynomial time computable.
-		\item $f(x)=g(\sigma(x))$.
-	\end{enumerate} We know, $\#SAT$ and $\#CYCLE$ must also be
-hard. We must be able to show with the above discussed counting
-scenario that
-	\begin{center} $\#SAT(\phi)=\#CYCLE(\sigma(\phi))$
-	\end{center} Now if such a reduction exists, then we can solve
-$SAT$ by checking if $\#SAT(\phi)=\#CYCLE(\sigma(\phi))$, which can be
-done in polynomial time.  Here the problem is that one language is in
-$P$. But if we impose this strictness then in $\#P$ only $NP-Complete$
-problems will be hard.  But we already know $\#CYCLE$ is also hard.
-\item{\textbf{Attempt 2:}} $f\leq g$, $f\in FP^g$, if there exists a
-functional oracle turing machine (instead of going between
-$q_{yes}/q_{no}$, it has an output tape to write a value as
-output.)with queries to $g:\Sigma^*\rightarrow$ $\mathcal{N}$ that
-given any $x\in \Sigma^*$ can compute $f(x)$.  \\A function $g$ is
-$P-hard$ if $\forall f\in \#P, f\leq_m^p g$. $g$ is complete for $\#P$
-if $g\in \#P$ and $g$ is $\#P-hard$.
-\end{description}
-\begin{theorem} $\#SAT$ is $\#P-Complete$
-\end{theorem}
-	\begin{enumerate}
-		\item $\#SAT\in \#P$: $\exists$ a non-deterministic
-turing machine polynomial time which guesses assignments and verifies
-the same.
-		\item $\forall f\in \#P, f\leq_m^p \#SAT$: Let $f\in
-\#P$ via a machine $M$ such that $\forall x \in \Sigma^*,
-f(x)=\#acc_M(x)$
-	\end{enumerate}
-
-\begin{description}
-\item \textbf{Cook-Levin Theorem - Revisited.}
-	\begin{center} $L\in NP \Longrightarrow L\leq^p_m SAT$.
-	\end{center} Let $L\in NP$, via machine $M$ such that $x\in L
-\Longrightarrow M$ has an accepting path.  We construct $\phi_{(M,x)}$
-from computation history such that $ M$ has an accepting path implies
-$ \phi_{(M,x)}$ is satisfiable.  So for every accepting path, we have
-a satisfying assignment.  \\ ie., There is a one-to one mapping
-between the set of accepting paths and the set of satisfying
-assignments. The certificates correspods to the first set is the
-choice of non-deterministic bits and for the second set is the
-satisfying assignments. Such reductions are called \emph{Parsimonious
-reductions}.  \\ \emph{Note:} To prove NP-completeness, reduction need
-not be parsimonious.
-\end{description}
-\section{Perfect Matching in a graph}
-
-	\begin{definition}: Perfect Matching:
-
-	A bipartite graph $(X,Y,E)$ has a perfect matching if
-$\exists$ a subset of edges ($S$) such that each vertex has exactly
-one edge from $S$ incident on it.
-	\end{definition} \vspace{5mm}
-	\begin{definition}: Permanent of a Matrix For an $n\times n$
-matrix A, \\ Determinant of A, $Det(A)=\displaystyle\sum_{\sigma\text{
-is a permutation}\in S_n} (-1)^{sign(\sigma)}\prod_{i=1}^n
-A_{i,\sigma(i)}$ \\ Permanent of A,
-$Per(A)=\displaystyle\sum_{\sigma\in S_n} \prod_{i=1}^n
-A_{i,\sigma(i)}$
-	\end{definition}
-	\begin{description}
-	\item \textbf{Claim}: For a bipartite graph $G$, with $A$
-being the adjacency matrix in which rows are indexed by $x$ and
-columns are indexed by $y$. (Note that here $|x|=|y|$, otherwise graph
-doesnot have a perfect match.)
-	\end{description} For any $\sigma$,
-$\displaystyle\prod_{i=1}^n A_{i,\sigma(i)}=1$ if and only if $\sigma$
-gives a perfect matching in $G$.  \\ \emph{Note:}
-$A_{i,\sigma(i)}=1\Longleftrightarrow (i,\sigma(i))\in E$. Also the
-product is 1, if it holds for all.  \\ Now we can figure out whether
-there exixts a perfect matching or not. Checking if $G$ has a perfect
-matching is in $P$. Testing if $Per(A)$ is non-zero is also in $P$.
-
 \end{comment}
+
 \end{document}
